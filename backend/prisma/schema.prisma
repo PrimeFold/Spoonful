@@ -8,6 +8,26 @@ datasource db {
   provider = "postgresql"
 }
 
+enum SpotRating{
+  ONESTAR
+  TWOSTAR
+  THREESTAR
+  FOURSTAR
+  FIVESTAR
+}
+
+enum Tags{
+  TIFFIN
+  NON_VEG
+  VEG
+  SNACKS
+  LATE_NIGHT
+  HOME_STYLE
+  BUDGET
+  NORTH_INDIAN
+  SOUTH_INDIAN
+}
+
 model User {
   id            String    @id
   name          String
@@ -18,10 +38,21 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  foodSpots     FoodSpots[]
 
   @@unique([email])
   @@map("user")
 }
+
+model FoodSpots{
+  id String @id @default(cuid())
+  user User[]
+  name String 
+  location String
+  spotRating  SpotRating
+  tags Tags
+}
+
 
 model Session {
   id        String   @id
