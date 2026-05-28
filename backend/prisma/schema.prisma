@@ -39,7 +39,6 @@ model User {
   sessions      Session[]
   accounts      Account[]
   foodSpots     FoodSpots[]
-
   @@unique([email])
   @@map("user")
 }
@@ -100,4 +99,14 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+
+model OTP{
+  id String @id @default(cuid())
+  otp String @unique
+  email     String
+  createdAt DateTime @default(now())
+  expireAt DateTime  
+  @@index([email])
 }

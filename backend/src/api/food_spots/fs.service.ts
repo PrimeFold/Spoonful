@@ -181,3 +181,38 @@ export const assignRating = async(rating:SpotRating,id:string)=>{
 }
 
 
+export const getFoodSpotById = async(spotId:string)=>{
+  try {
+    const exists = await prisma.foodSpots.findFirst({
+      where:{
+        id:spotId
+      },
+      select:{
+        id:true,
+        name:true,
+        userId:true,
+        location:true,
+        tags:true,
+        spotRating:true
+      }
+    })
+
+    if(!exists){
+      return {
+        success:false,
+        message:"Food spot does NOT exist"
+      }
+    }
+    return{
+      success:true,
+      message:"Food spot found!",
+      data:exists
+    }
+  } catch (error) {
+    return {
+        success:false,
+        message:(error as Error).message
+    }
+  }
+}
+
