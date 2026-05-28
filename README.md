@@ -8,7 +8,7 @@ Spoonful is a community-driven food discovery app for college students — find 
 
 ## The Problem
 
-Zomato is for people who can afford ₹200 delivery fees. The best food near any Indian college — the ₹80 thali aunty, the late-night dhaba, the tiffin service everyone swears by — exists nowhere online. You find it by asking a senior. Spoonful fixes that.
+Zomato is for people who can afford ₹200 delivery fees. The best food near any Indian college — the ₹80 dinner thali  , the late-night dhaba, the tiffin service everyone swears by — exists nowhere online. You find it by asking a senior. Spoonful fixes that.
 
 ---
 
