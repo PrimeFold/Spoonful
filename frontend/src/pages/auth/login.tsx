@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 import toast from 'react-hot-toast'
 import { useAuth } from "../../context/AuthContext"
+import LoaderComponent from "../../../components/loader"
 
 export default function LoginPage() {
   const [loading,setLoading] = useState(false);
@@ -18,12 +19,20 @@ export default function LoginPage() {
     try {
       await signIn({email:email,password:password});
       setLoading(false)
-      navigate("/app/home")
+      navigate("/verification")
     } catch (error) {
       toast.error((error as Error).message)
+
       setLoading(false)
     }
   }
+
+  if(loading) return (
+    <main className="bg-background min-h-screen flex flex-col items-center justify-center px-4 py-10">
+      <LoaderComponent/>
+    </main>
+  )
+  
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">

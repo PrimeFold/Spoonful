@@ -1,17 +1,37 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
+import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
+import LoaderComponent from "../../../components/loader";
 
 export default function SignupPage() {
+  const [loading,setLoading] = useState(false);
+  const [username,setUsername]= useState("");
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
+  const {signUp} = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
-    navigate("/onboarding")
+    setLoading(true);
+    try {
+      await signUp({name:username,email,password})
+      setLoading(false)
+      navigate('/login')
+    } catch (error) {
+      toast.error((error as Error).message)
+      setLoading(false)
+    }
   }
+
+  if(loading) return (
+    <main className="bg-background min-h-screen flex flex-col items-center justify-center px-4 py-10">
+      <LoaderComponent/>
+    </main>
+  )
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
@@ -57,6 +77,20 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@college.edu"
+              required
+              className="w-full bg-input border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+            />
+          </div>
+          <div>
+            <label htmlFor="username" className="block text-sm font-semibold text-foreground mb-1.5">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Eren yeager"
               required
               className="w-full bg-input border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
             />

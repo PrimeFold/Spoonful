@@ -7,6 +7,7 @@ import LoginPage from "./pages/auth/login"
 import SignupPage from "./pages/auth/signup"
 import HomePage from "./pages/app/home"
 import { ProtectedRoute } from "./protected/ProtectedRoute"
+import Verification from "./pages/auth/verification"
 
 function App() {
   return (
@@ -17,7 +18,9 @@ function App() {
         <Route path="/for-buisnessess" element={<ForBusinesses/>}/> 
         <Route path="/login" element={<LoginPage/>}/> 
         <Route path="/signup" element={<SignupPage/>}/>
+        <Route path="/verification" element={<Verification/>}/>
 
+        
         //Protected Routes
         <Route element={<ProtectedRoute/>}>
           <Route path="/app/home" element={<HomePage/>}/>

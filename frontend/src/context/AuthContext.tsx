@@ -26,6 +26,7 @@ export interface AuthContextType {
   signIn: (credentials: SignInCredentials) => Promise<void>;
   signUp: (credentials: SignUpCredentials) => Promise<void>;
   signOut: () => Promise<void>;
+  otpVerified: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,9 +34,14 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({children}: { children: ReactNode;}) {
   const { data, isPending } = authClient.useSession();
 
-  const user = (data?.user as unknown as User) ?? null;
+  
+  const user = (data?.user as User) ?? null;
 
   const isAuthenticated = !!user;
+
+  const otpVerified = user?.emailVerified ?? false;
+
+
 
   const signIn = async ({email,password,}: SignInCredentials) => {
     const { error } = await authClient.signIn.email({  email ,  password });
@@ -70,6 +76,7 @@ export function AuthProvider({children}: { children: ReactNode;}) {
      user,
      isLoading: isPending,
      isAuthenticated,
+     otpVerified,
      signIn,
      signUp,
      signOut,

@@ -25,7 +25,6 @@ export default function ForBusinessesPage() {
       <header className="border-b border-border bg-card">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 font-extrabold text-lg text-foreground">
-            <span>🥄</span>
             <span>Spoonful</span>
           </Link>
           <Link to="/" className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors">
@@ -59,7 +58,7 @@ export default function ForBusinessesPage() {
           <div className="grid sm:grid-cols-2 gap-2 text-left max-w-md mx-auto">
             {["Verified listing badge", "Priority search placement", "Respond to reviews", "Weekly analytics report"].map((f) => (
               <div key={f} className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                <Check className="h-4 w-4 text-primary shrink-0" />
                 {f}
               </div>
             ))}

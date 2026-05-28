@@ -21,6 +21,8 @@
    - api end-points
    - getting food-spot by id
    - Adding OTP verification system through email ( probably gonna use nodemailer since I don't have a domain yet ).
+   - Added axios instance to hit OTP verification end-point
+   - Verification will be in the form of POST-LOGIN.
    
 - Was working on 27th May as well but didn't commit as such , anyways , wrote some functions for food spot controller.
 - It was a little complex for me to implement the search filter and just overall feed-like fetch ( which is easy but due to filter logic I was confused ).

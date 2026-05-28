@@ -1,6 +1,3 @@
 
 import type {Request,Response} from 'express'
-export interface Handler {
-    req: Request,
-    res: Response
-}
+export type Handler = (req: Request, res: Response) => Promise<any> | any;
