@@ -16,8 +16,17 @@ app.use(helmet());
 app.use('/',router);
 
 app.use(cors({
-    origin:baseUrl
+    origin:baseUrl 
 }));
+
+const allowedOrigins = ['http://frontend1.example.com', 'http://frontend2.example.com'];
+
+app.use((req,res,next)=>{
+    const origin = req.headers.origin;
+    if(allowedOrigins.includes(origin as string)){
+        res.header('Access-Control-Allow-Origin',origin)
+    }
+})
 
 app.listen(PORT,()=>{
     console.log(`Server started running on port : ${PORT}`)
