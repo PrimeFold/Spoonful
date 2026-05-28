@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv'
 import cors from 'cors';
 import { toNodeHandler } from 'better-auth/node';
-import { auth } from './lib/auth';
+import { auth } from './lib/auth/auth';
 dotenv.config();
 
 const app = express();

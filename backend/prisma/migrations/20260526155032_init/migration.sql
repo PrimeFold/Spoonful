@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "SpotRating" AS ENUM ('ONESTAR', 'TWOSTAR', 'THREESTAR', 'FOURSTAR', 'FIVESTAR');
+
+-- CreateEnum
+CREATE TYPE "Tags" AS ENUM ('TIFFIN', 'NON_VEG', 'VEG', 'SNACKS', 'LATE_NIGHT', 'HOME_STYLE', 'BUDGET', 'NORTH_INDIAN', 'SOUTH_INDIAN');
+
 -- CreateTable
 CREATE TABLE "user" (
     "id" TEXT NOT NULL,
@@ -9,6 +15,18 @@ CREATE TABLE "user" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "FoodSpots" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "location" TEXT NOT NULL,
+    "spotRating" "SpotRating" NOT NULL,
+    "tags" "Tags"[],
+
+    CONSTRAINT "FoodSpots_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -70,6 +88,9 @@ CREATE INDEX "account_userId_idx" ON "account"("userId");
 
 -- CreateIndex
 CREATE INDEX "verification_identifier_idx" ON "verification"("identifier");
+
+-- AddForeignKey
+ALTER TABLE "FoodSpots" ADD CONSTRAINT "FoodSpots_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

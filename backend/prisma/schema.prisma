@@ -44,15 +44,15 @@ model User {
   @@map("user")
 }
 
-model FoodSpots{
-  id String @id @default(cuid())
-  user User[]
-  name String 
-  location String
-  spotRating  SpotRating
-  tags Tags
+model FoodSpots {
+  id         String     @id @default(cuid())
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  name       String
+  location   String
+  spotRating SpotRating
+  tags       Tags[]
 }
-
 
 model Session {
   id        String   @id
