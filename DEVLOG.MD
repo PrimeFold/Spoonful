@@ -17,10 +17,12 @@
 
 ## Day-3 (28/05/2026)
 
-- Today's goal is to sort of get the dashboard working barebones - For that I need to Get some backend functions done.
+- Today's goal is to sort of get the dashboard working barebones - For that I need to Get some backend stuff done such as routes and api-endpoints. 
 - Was working on 27th May as well but didn't commit as such , anyways , wrote some functions for food spot controller.
 - It was a little complex for me to implement the search filter and just overall feed-like fetch ( which is easy but due to filter logic I was confused ).
 - Fixed some migration issues , had to reset the db and migrate again , took a fair toll of time.
+
+
 
 
 
