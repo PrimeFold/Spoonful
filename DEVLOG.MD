@@ -39,7 +39,13 @@
 
 ## Questions that I had and Answers that I got : 
 
-- There was a question that " why should I not just filter data on the frontend ? , just retrieve everything and filter based on user filter params ". Then I realised the more JS sent   over the network , the poorer perfomance + security at that moment on those queries . So I had to add the filter logic on the backend , so the app only retrieves what's asked. And ofcourse pagination will be there.
+- There was a question that " why should I not just filter data on the frontend ? , just retrieve everything and filter based on user filter params ". Then I realised the more JS sent   over the network , I'll be facing issues like - 
+   * Larger hydration cost
+   * More JS memory usage
+   * More React work
+   * Slower mobile performance
+   * Worse Core Web Vitals
+- So I had to add the filter logic on the backend , so the app only retrieves what's asked. And ofcourse pagination will be there.
 
 ## Bugs : 
 
