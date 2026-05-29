@@ -39,7 +39,7 @@
 
 ## Questions that I had and Answers that I got : 
 
-- There was a question that " why should I not just filter data on the frontend ? , just retrieve everything and filter based on user filter params ". Then I realised the more JS sent   over the network , I'll be facing issues like - 
+- There was a question that " why should I not just filter data on the frontend ? , just retrieve everything and filter based on user filter params ". Then I realised that large amoutn of JS sent over the network will produce issues like - 
    * Larger hydration cost
    * More JS memory usage
    * More React work
