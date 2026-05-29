@@ -1,4 +1,4 @@
-# Spoonful 🥄
+# Spoonful 
 
 > **Every good meal near you, found.**
 
