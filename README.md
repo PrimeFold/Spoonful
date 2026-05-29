@@ -50,7 +50,7 @@ Zomato is for people who can afford ₹200 delivery fees. The best food near any
 
 ## V1 Scope
 
-- [ ] Auth (sign up / log in)
+- [*] Auth (sign up / log in)
 - [ ] Set college/location on onboarding
 - [ ] Add a food spot (name, location, price range, tags, photo)
 - [ ] View nearby spots in list + map view
