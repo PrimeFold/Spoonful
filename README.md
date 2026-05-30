@@ -1,4 +1,4 @@
-# Spoonful 🥄
+# Spoonful 
 
 > **Every good meal near you, found.**
 
@@ -54,7 +54,7 @@ Zomato is for people who can afford ₹200 delivery fees. The best food near any
 - [ ] Set college/location on onboarding
 - [ ] Add a food spot (name, location, price range, tags, photo)
 - [ ] View nearby spots in list + map view
-- [ ] Rate and review a spot
+- [ ] Rate and review a spothttps://github.com/PrimeFold/Spoonful/blob/main/README.md
 - [ ] Basic tag filtering
 - [ ] PWA manifest + installable on Android
 
