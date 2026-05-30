@@ -34,18 +34,17 @@
 - Today's goal is to 
  * Fix bugs of last day.
  * Get the filtering logic done on the frontend so its seamless with the backend. 
- * Get the pagination working properly.
  * Make sure data flows into the home page nicely , then we'll focus on 'adding food spots' aspect.
 
 ## Questions that I had and Answers that I got : 
 
-- There was a question that " why should I not just filter data on the frontend ? , just retrieve everything and filter based on user filter params ". Then I realised that large amoutn of JS sent over the network will produce issues like - 
+- There was a question that "Why should I not just filter data on the frontend ? , just retrieve everything and filter based on user filter params ". Then I realised that large amoutn of JS sent over the network will produce issues like - 
    * Larger hydration cost
    * More JS memory usage
    * More React work
    * Slower mobile performance
    * Worse Core Web Vitals
-- So I had to add the filter logic on the backend , so the app only retrieves what's asked. And ofcourse pagination will be there.
+- So I had to add the filter logic on the backend , so the app only retrieves what's asked. And ofcourse pagination will be implemented soon .
 
 ## Bugs : 
 
@@ -67,4 +66,15 @@
 ## Extras : 
 - Added QueryClientProvider and wrapped it around the app.
 - Added ONE global instance for the useQueryClient hook.
+
+
+# Day-6 (30/05/2026)
+
+- Today I'll be making optimizations in my code : 
+   * Duplicated where clause , unified them.
+   * Preparing pagination on the backend and frontend ( maybe not today ).
+   * Improving redis caching logic so that pagination don't mess up the cache stored. As of now it only stores the search metadata , but what if the user does the same search on being other than the page he was on? The backend should return THAT page's content . 
+   * Improved data shape from backend and making sure the same shape is received on the frontend as well.
+   * Added GET route for getting all food spots.
+   * Some fixes in pagination on the frontend , implemented ui for that as well.
 

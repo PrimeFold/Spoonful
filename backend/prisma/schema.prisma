@@ -51,6 +51,9 @@ model FoodSpots {
   location   String
   spotRating SpotRating
   tags       Tags[]
+
+  @@unique([name, location])
+  @@index([name])
 }
 
 model Session {

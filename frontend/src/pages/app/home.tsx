@@ -8,10 +8,27 @@ import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getAllFoodSpots } from "../../../lib/actions";
 import LoaderComponent from "../../../components/loader";
+import {SpotRating, Tags} from '../../../../backend/src/generated/prisma/client'
+import { type FoodSpotDTO} from '../../../../shared/food-spots.type'
 
-export default function HomePage() {
-  const [activeFilter, setActiveFilter] = useState("All");
+export default function HomePage() {  
+  const [selectedTags, setSelectedTags] = useState<Tags[]>([]);
+  const [selectedRating, setSelectedRating] = useState<SpotRating>();
   const [searchQuery, setSearchQuery] = useState("");
+  const [page,setPage] = useState(1);
+  const limit = 10;
+  
+  const filters: Tags[] = [
+  Tags.BUDGET,
+  Tags.NON_VEG,
+  Tags.HOME_STYLE,
+  Tags.LATE_NIGHT,
+  Tags.NORTH_INDIAN,
+  Tags.SNACKS,
+  Tags.SOUTH_INDIAN,
+  Tags.TIFFIN,
+  Tags.VEG
+  ];
 
   const {  data: session,  error: sessionError,  isPending: sessionLoading} = authClient.useSession();
   
@@ -23,6 +40,7 @@ export default function HomePage() {
     }
   }, [sessionError]);
 
+  
   const currentHour = new Date().getHours();
 
   const { meal, timeOfDay } = useMemo(() => {
@@ -46,43 +64,15 @@ export default function HomePage() {
     };
   }, [currentHour]);
 
-  const {
-    data,
-    error,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["all-food-spots"],
-    queryFn: getAllFoodSpots,
+  const {  data,  error,  isLoading,  isError } = useQuery({
+    queryKey: ["all-food-spots",searchQuery,selectedTags,selectedRating,page],
+    queryFn:()=> getAllFoodSpots({search:searchQuery, tags:selectedTags, rating:selectedRating, page,limit})
   });
 
-  const spots = Array.isArray(data) ? data : data?.data || [];
+  const spots : FoodSpotDTO[] = data?.data.items ?? [];
+  const pagination = data?.data.pagination;
 
-  const filteredSpots = spots.filter((s: any) => {
-    if (searchQuery) {
-      return (
-        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.area.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.tags.some((t: string) =>
-          t.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      );
-    }
 
-    if (activeFilter === "All") return true;
-
-    if (activeFilter === "Under ₹100") {
-      return s.priceRange === "₹";
-    }
-
-    if (activeFilter === "Top Rated") {
-      return s.rating >= 4.7;
-    }
-
-    return s.tags.some((t: string) =>
-      t.toLowerCase().includes(activeFilter.toLowerCase())
-    );
-  });
 
   if (isLoading || sessionLoading) {
     return (
@@ -94,7 +84,7 @@ export default function HomePage() {
 
   if (isError) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <p className="text-sm font-semibold text-red-500">
           {(error as Error)?.message || "Something went wrong"}
         </p>
@@ -153,7 +143,30 @@ export default function HomePage() {
         </div>
 
         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 mb-5">
-          Filter Pills
+          {filters.map((tag)=>{
+            const selected = selectedTags.includes(tag);
+            return(
+              <button
+                key={tag}
+                onClick={() => {
+                  setPage(1);
+                  setSelectedTags((prev) =>
+                    selected
+                      ? prev.filter((t) => t !== tag)
+                      : [...prev, tag]
+                  );
+                }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  selected
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-foreground"
+                  }`}
+                >
+                {tag}
+              </button>
+            )
+            
+          })}
         </div>
 
         <section>
@@ -174,7 +187,7 @@ export default function HomePage() {
             )}
           </div>
 
-          {filteredSpots.length === 0 ? (
+          {spots.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-5xl mb-4">🍽️</div>
 
@@ -197,7 +210,7 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {filteredSpots.map((spot: any) => (
+              {spots.map((spot) => (
                 <SpotCard
                   key={spot.id}
                   spot={spot}
@@ -216,7 +229,25 @@ export default function HomePage() {
       >
         <Plus className="h-6 w-6" />
       </Link>
+      <div className="flex items-center justify-between mt-6">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+        >
+          Previous
+        </button>
 
+        <span>
+          Page {pagination?.page} of {pagination?.totalPages}
+        </span>
+
+        <button
+          disabled={!pagination?.hasMore}
+          onClick={() => setPage((p) => p + 1)}
+        >
+          Next
+        </button>
+      </div>
       <BottomNav />
     </div>
   );

@@ -1,15 +1,18 @@
 import * as FoodSpotService from './fs.service'
 import type { Handler } from '../../types';
+import { GetFoodSpotsSchema } from '../../lib/zod';
 
 
-export const AddFoodSpotController = async({ req, res }: Handler) => {
+export const AddFoodSpotController : Handler =  async(req,res) => {
     const { data } = req.body;
+    
     const userId = req.user!.id || null;
     if(!userId){
         res.status(403).json({
             message:"Forbidden Access"
         })
     }
+    
     try {
         const response = await FoodSpotService.AddFoodSpotService(userId as string,data);
         if(!response.success){
@@ -27,11 +30,24 @@ export const AddFoodSpotController = async({ req, res }: Handler) => {
     }
 }
 
-export const getAllFoodSpotsController = async({ req, res }: Handler) => {
-    const {search,tags,rating} = req.body;
+export const getAllFoodSpotsController : Handler = async(req,res) => {
 
+    const validated = GetFoodSpotsSchema.safeParse(req.query);
+
+    if(!validated.success){
+        return res.status(400).json({
+            success:false,
+            message:"Invalid",
+            data:null
+        })
+    }
+
+    console.log(validated.data);
+    
+    const { search , tags , rating , page , limit} = validated.data;
+    
     try {
-        const response = await FoodSpotService.getAllFoodSpots({search,tags,rating});
+        const response = await FoodSpotService.getAllFoodSpots({search,tags,rating,limit,page});
         if(!response.success){
             return res.status(400).json({message:response.message})
         }
@@ -50,7 +66,7 @@ export const getAllFoodSpotsController = async({ req, res }: Handler) => {
 }
 
 
-export const assignRatingController = async({req,res}:Handler)=>{
+export const assignRatingController : Handler = async(req,res)=>{
     const {spotId,rating} = req.body;
 
     try {
@@ -74,7 +90,7 @@ export const assignRatingController = async({req,res}:Handler)=>{
 }
 
 
-export const getFoodSpotById = async({req,res}:Handler)=>{
+export const getFoodSpotById : Handler = async(req,res)=>{
     const spotId = req.params.id;
     if(!spotId){
         return res.status(404).json({
