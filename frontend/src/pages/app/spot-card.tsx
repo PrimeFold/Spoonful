@@ -3,7 +3,7 @@
 import { Link } from "react-router-dom";
 import { Star, MapPin } from "lucide-react";
 import { cn } from "../../../lib/utils";
-import {SpotRating,Tags} from '../../../../backend/src/generated/prisma/client'
+import type {SpotRating,Tags} from '../../../../backend/src/generated/prisma/client'
 
 export interface SpotCardData {
 

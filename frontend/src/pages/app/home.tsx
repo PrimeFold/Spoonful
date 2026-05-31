@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getAllFoodSpots } from "../../../lib/actions";
 import LoaderComponent from "../../../components/loader";
-import {SpotRating, Tags} from '../../../../backend/src/generated/prisma/client'
+import type {SpotRating, Tags} from '../../../../backend/src/generated/prisma/client'
 import { type FoodSpotDTO} from '../../../../shared/food-spots.type'
 
 export default function HomePage() {  
@@ -19,15 +19,15 @@ export default function HomePage() {
   const limit = 10;
   
   const filters: Tags[] = [
-  Tags.BUDGET,
-  Tags.NON_VEG,
-  Tags.HOME_STYLE,
-  Tags.LATE_NIGHT,
-  Tags.NORTH_INDIAN,
-  Tags.SNACKS,
-  Tags.SOUTH_INDIAN,
-  Tags.TIFFIN,
-  Tags.VEG
+    "BUDGET",
+    "NON_VEG",
+    "HOME_STYLE",
+    "LATE_NIGHT",
+    "NORTH_INDIAN",
+    "SNACKS",
+    "SOUTH_INDIAN",
+    "TIFFIN",
+    "VEG",
   ];
 
   const {  data: session,  error: sessionError,  isPending: sessionLoading} = authClient.useSession();
