@@ -30,6 +30,18 @@ const RATINGS: { label: string; value: SpotRatingDTO }[] = [
   { label: "🏆 Delicious", value: "FIVESTAR" },
 ];
 
+const filters: TagsDTO[] = [
+  "BUDGET",
+  "NON_VEG",
+  "HOME_STYLE",
+  "LATE_NIGHT",
+  "NORTH_INDIAN",
+  "SNACKS",
+  "SOUTH_INDIAN",
+  "TIFFIN",
+  "VEG",
+];
+
 export default function HomePage() {
   const [selectedTags, setSelectedTags] = useState<TagsDTO[]>([]);
   const [selectedRating, setSelectedRating] = useState<SpotRatingDTO>();
@@ -38,20 +50,8 @@ export default function HomePage() {
   const [showFilters, setShowFilters] = useState(false);
   const limit = 10;
 
-  const filters: TagsDTO[] = [
-    "BUDGET",
-    "NON_VEG",
-    "HOME_STYLE",
-    "LATE_NIGHT",
-    "NORTH_INDIAN",
-    "SNACKS",
-    "SOUTH_INDIAN",
-    "TIFFIN",
-    "VEG",
-  ];
 
-  const { data: session, error: sessionError, isPending: sessionLoading } =
-    authClient.useSession();
+  const { data: session, error: sessionError, isPending: sessionLoading } = authClient.useSession();
 
   const user = session?.user;
 

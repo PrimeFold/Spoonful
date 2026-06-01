@@ -13,7 +13,7 @@ const navItems = [
 
 export function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/90 backdrop-blur-xl safe-area-pb">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-white backdrop-blur-xl safe-area-pb">
       <div className="max-w-lg mx-auto flex items-center justify-between gap-2 rounded-t-[2rem] bg-card/95 px-3 py-3 shadow-[0_-20px_50px_-40px_rgba(15,23,42,0.35)]">
         {navItems.map(({ to, label, icon: Icon }) => {
           const isAdd = label === "Add";
