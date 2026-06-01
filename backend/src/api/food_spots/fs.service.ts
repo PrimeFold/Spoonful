@@ -4,6 +4,7 @@ import {redis} from '../../lib/redis'
 import type { ApiResponse, PaginatedResponse } from "../../types/api.types";
 import type { FoodSpotDTO } from '../../../../shared/food-spots.type'
 import { Prisma } from "../../generated/prisma/client";
+import bcrypt from 'bcrypt';
 
 interface AddFoodSpotInput {
   spotName: string;
@@ -20,6 +21,17 @@ interface GetFoodSpotsFilters {
   limit:number;
   page:number;
 }
+
+interface GetUserFoodSpotsFilters{
+  userId:string;
+  search?: string;
+  tags?: Tags[];
+  rating?: SpotRating;
+  limit:number;
+  page:number;
+}
+
+
 
 export const AddFoodSpotService  = async (  userId:string,  data: AddFoodSpotInput ): Promise<ApiResponse<FoodSpotDTO>> => {
   try {
@@ -93,6 +105,7 @@ export const getAllFoodSpots = async({search,tags,rating,limit,page}:GetFoodSpot
     }
     const skip = (page - 1) * limit;
 
+    
     const whereClause : Prisma.FoodSpotsWhereInput = {
       ...(search && {
         name: {
@@ -130,9 +143,6 @@ export const getAllFoodSpots = async({search,tags,rating,limit,page}:GetFoodSpot
     const total = await prisma.foodSpots.count({
       where:whereClause
     });
-    if(!skip){
-      throw new Error("skip not found")
-    }
     const hasMore = skip + foodSpots.length < total;
     
     await redis.setex(cacheKey, 10 * 60, JSON.stringify(foodSpots));
@@ -250,3 +260,93 @@ export const getFoodSpotById = async(spotId:string):Promise<ApiResponse<FoodSpot
   }
 }
 
+
+export const getFoodSpotsByUserIdService = async({search,tags,rating,limit,page,userId}:GetUserFoodSpotsFilters):Promise<ApiResponse<PaginatedResponse<FoodSpotDTO>>>=>{
+  try {
+
+    const normalizedTags = tags?.slice().sort().join(",") || "";
+    const normalizedSearch = search?.trim().toLowerCase() || "";
+    const normalizedRating = rating || "";
+
+    const userIdHash = await bcrypt.hash(userId,12);
+
+    const cacheKey = `my-submissions:${normalizedSearch}:${normalizedTags}:${normalizedRating}:${page}:${userIdHash}`
+
+    const cache = await redis.get(cacheKey);
+  
+    if(cache && cache.length!=0){
+      const data = JSON.parse(cache);
+      return{
+        success:true,
+        message:"Cache found!",
+        data:data
+      }
+    }
+
+
+    const whereClause : Prisma.FoodSpotsWhereInput = {
+      ...(search && {
+        name: {
+          contains: search,
+          mode: "insensitive"
+        }
+      }),
+    
+      ...(tags && tags.length > 0 && {
+        tags: {
+          hasEvery: tags
+        }
+      }),
+    
+      ...(rating && {
+        spotRating: rating
+      })
+    }
+
+    const skip = (page - 1)*limit;
+
+    const foundSpots = await prisma.foodSpots.findMany({where:whereClause,skip,take:limit,select:{
+       id:true,
+        name:true,
+        userId:true,
+        location:true,
+        tags:true,
+        spotRating:true
+    }})
+
+    if(!foundSpots || foundSpots.length==0){
+      return {
+        success:true,
+        message:"No submissions found",
+        data:null
+      }
+    }
+
+    const total = await prisma.foodSpots.count({where:whereClause});
+
+    const hasMore = skip + foundSpots.length < total;
+    
+    await redis.setex(cacheKey,3 * 60, JSON.stringify(foundSpots));
+
+    return{
+      success:true,
+      message:"User submissions found",
+      data:{
+         items: foundSpots,
+          pagination: {
+            page,
+            limit,
+            total,
+            hasMore
+          }
+      }
+    }
+    
+  } catch (error) {
+    return{
+      success:false,
+      message:(error as Error).message,
+      data:null
+    }
+  }
+}

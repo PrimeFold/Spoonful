@@ -14,7 +14,7 @@ if(!baseUrl){
     console.log("base url not found")
     process.exit(1);
 }
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
 
 app.use(cors({
@@ -24,7 +24,7 @@ app.use(cors({
 app.use(helmet());
 app.use(express.json());
 
-app.all('/api/auth/{*any}', toNodeHandler(auth));
+app.all('/api/auth/*', toNodeHandler(auth));
 app.use('/',router);
 
 

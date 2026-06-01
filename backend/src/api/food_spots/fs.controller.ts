@@ -42,7 +42,7 @@ export const getAllFoodSpotsController : Handler = async(req,res) => {
         })
     }
 
-    console.log(validated.data);
+    
     
     const { search , tags , rating , page , limit} = validated.data;
     
@@ -116,4 +116,39 @@ export const getFoodSpotById : Handler = async(req,res)=>{
     }
 
 
+}
+
+export const getFoodSpotsByUserIdController :Handler = async(req,res)=>{
+    const userId = req.user!.id ;
+    if(!userId){
+        res.status(403).json({
+            message:"Forbidden Access"
+        })
+    }
+    const validated = GetFoodSpotsSchema.safeParse(req.query);
+    if(!validated.success){
+        return res.status(400).json({
+            success:false,
+            message:"Invalid",
+            data:null
+        })
+    }
+    const { search , tags , rating , page , limit} = validated.data;
+
+    try {
+        const response = await FoodSpotService.getFoodSpotsByUserIdService({search,tags,rating,limit,page,userId});
+        if(!response.success){
+            return res.status(400).json({
+                message:response.message
+            })
+        }
+        return res.status(200).json({
+            message:response.message,
+            data:response.data
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message:(error as Error).message
+        })
+    }
 }

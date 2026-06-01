@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { generateOtp, verifyOtp } from "../../../lib/auth";
+import { verifyOtp } from "../../../lib/auth";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
@@ -9,9 +9,7 @@ const Verification = () => {
   const [loading, setLoading] = useState(false);
 
   const [otp, setOtp] = useState(["","","","","",""]);
-  useEffect(() => {
-    generateOtp();
-  }, []);
+
 
 
   const navigate = useNavigate();

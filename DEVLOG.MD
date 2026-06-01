@@ -78,3 +78,17 @@
    * Added GET route for getting all food spots.
    * Some fixes in pagination on the frontend , implemented ui for that as well.
 
+# Day-7 (01/06/2026)
+
+- Debugging the food spot feed request and request validation:
+   * Cleaned frontend GET params so blank `search` is not sent as `search=`.
+   * Updated backend query validation to ignore empty search strings and handle optional filters correctly.
+   * Confirmed the route is protected, so proper session/auth headers are required for `/app/get-food-spots`.
+   * Solution found ! : 'skip' calculation was correct but when `skip=0` , it returns an error but `skip=0` is correct for `page=1`. Removed that validation in order to fix the issue.
+
+- Built the logic to get user's own submissions i.e Food-spots that he submitted.
+   * Added an endpoint `/app/get-my-food-spots`.
+   * Added a controller and service function for the same.
+   * Prepared a helper function on the frontend.
+   * Added function calling and proper data flow. 
+- Added ui adjustments to make site responsive for both large and small screens

@@ -24,14 +24,15 @@ export async function authMiddleware(req:Request, res:Response, next:NextFunctio
       })
     }
 
-
-    if(!req.user?.emailVerified){
-      return res.status(403).json({
-        message:"Verify email first !"
-      })
-    }
     req.user = session.user;
     req.session = session.session;
+
+    if (!req.user?.emailVerified) {
+      return res.status(403).json({
+        message: "Verify email first !"
+      })
+    }
+
     next()
   } catch (error) {
     next(error)

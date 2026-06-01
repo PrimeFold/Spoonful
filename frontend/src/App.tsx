@@ -8,6 +8,8 @@ import SignupPage from "./pages/auth/signup"
 import HomePage from "./pages/app/home"
 import { ProtectedRoute } from "./protected/ProtectedRoute"
 import Verification from "./pages/auth/verification"
+import ProfilePage from "./pages/app/profile"
+import AddSpotPage from "./pages/app/add-spot"
 
 function App() {
   return (
@@ -24,6 +26,9 @@ function App() {
         //Protected Routes
         <Route element={<ProtectedRoute/>}>
           <Route path="/app/home" element={<HomePage/>}/>
+          <Route path="/app/profile" element={<ProfilePage/>}/>
+          <Route path="/app/add-spot" element={<AddSpotPage/>}/>
+          <Route path="/app/notifications" element={<></>}/> 
         </Route> 
       </Routes>
       

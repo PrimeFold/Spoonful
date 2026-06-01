@@ -8,13 +8,13 @@ export type Session = typeof authClient.$Infer.Session;
 
 export type User = Session["user"];
 
-
 export const verifyOtp = async(otp:string)=>{
   const res=  await api.post('/otp/verify',{otp})
   return res.data;
 }
 
 export const generateOtp = async()=>{
-  await api.post('/otp/generate')
+  const {data} = await api.post('/otp/generate')
+  return data ;
 }
 

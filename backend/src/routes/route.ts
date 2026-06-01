@@ -11,10 +11,10 @@ export const router = Router();
 //All GET routes
 router.get('/app/get-food-spots',authMiddleware,FoodSpotController.getAllFoodSpotsController);
 router.get('/app/get-food-spot/:id',authMiddleware,FoodSpotController.getFoodSpotById)
+router.get('/app/my-food-spots',authMiddleware,limiter,FoodSpotController.getFoodSpotsByUserIdController);
 
 //All POST routes
 router.post('/app/add-food-spot',authMiddleware,limiter,FoodSpotController.AddFoodSpotController);
 router.put('/app/add-food-rating',authMiddleware,limiter,FoodSpotController.assignRatingController);
-router.get('/app/get-food-spots',authMiddleware,limiter,FoodSpotController.getAllFoodSpotsController);
 router.post('/otp/generate', GenerateOtpController);
 router.post('/otp/verify', VerifyOtpController)

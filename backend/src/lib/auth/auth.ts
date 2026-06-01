@@ -12,6 +12,7 @@ const adapter = new PrismaPg({ connectionString });
 export const prisma = new PrismaClient({adapter});
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+
 if(!baseUrl){
     console.log("base url not found")
 }
@@ -26,9 +27,21 @@ export const auth = betterAuth({
         enabled:true
     },
     baseURL:baseUrl,
+    cookieOptions:{
+        httpOnly:true,
+        secure:false,
+        sameSite:'lax',
+        path:'/'
+    },
     trustedOrigins:[
         frontendUrl as string
-    ]
+    ],
+    advanced:{
+        cookiePrefix:"better-auth",
+        disableOriginCheck:process.env.NODE_ENV!=='production',
+
+    },
+    
 });
 
 

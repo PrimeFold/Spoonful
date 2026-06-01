@@ -31,25 +31,27 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({children}: { children: ReactNode;}) {
+function AuthProvider({children}: { children: ReactNode;}) {
   const { data, isPending } = authClient.useSession();
 
-  
   const user = (data?.user as User) ?? null;
 
   const isAuthenticated = !!user;
 
   const otpVerified = user?.emailVerified ?? false;
 
-
-
   const signIn = async ({email,password,}: SignInCredentials) => {
-    const { error } = await authClient.signIn.email({  email ,  password });
-
-    if (error) {
-      throw new Error(error.message || "Failed to sign in");
+    console.log("Signing in...")
+    try {
+       await authClient.signIn.email({  email ,  password });
+      
+    } catch (error) {
+       throw new Error(( error as Error).message || "Failed to sign in");
     }
+    
+    
   };
+
 
   const signUp = async ({name,email,password}: SignUpCredentials) => {
     const { error } = await authClient.signUp.email({
@@ -90,6 +92,8 @@ export function AuthProvider({children}: { children: ReactNode;}) {
     </AuthContext.Provider>
   );
 }
+
+export { AuthProvider };
 
 export function useAuth() {
   const context = useContext(AuthContext);

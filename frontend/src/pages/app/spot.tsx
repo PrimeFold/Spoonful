@@ -3,155 +3,155 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { RateReviewModal } from "./rate-review-modal";
 import { MOCK_SPOTS, MOCK_REVIEWS } from "../../../lib/mock-data";
-import { BottomNav } from "../components/bottom-nav";
+import { BottomNav } from "./bottom-nav";
 
 export default function SpotDetailPage() {
   const { id } = useParams<{ id: string }>();
 
-  const spot = MOCK_SPOTS.find((s) => s.id === id) || MOCK_SPOTS[0]
-  const [showRateModal, setShowRateModal] = useState(false)
+  const spot = MOCK_SPOTS.find((s) => s.id === id) || MOCK_SPOTS[0];
+  const [showRateModal, setShowRateModal] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      {/* Hero photo */}
-      <div className="relative h-64 bg-secondary overflow-hidden">
-        {spot.imageUrl ? (
-          <img src={spot.imageUrl} alt={spot.name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/20 to-accent/20">
-            <span className="text-7xl">🍽️</span>
+    <div className="min-h-screen bg-background pb-28 text-foreground">
+      <div className="relative overflow-hidden">
+        <div className="relative h-72 bg-secondary/80">
+          {spot.imageUrl ? (
+            <img src={spot.imageUrl} alt={spot.name} className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-primary/15">
+              <span className="text-7xl">🍽️</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/75" />
+        </div>
+
+        <div className="absolute inset-x-0 top-0 flex items-center justify-between px-4 py-4">
+          <Link
+            to="/app/home"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-card/80 text-foreground shadow-lg shadow-slate-900/10 transition hover:bg-card"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <button
+            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-card/80 text-foreground shadow-lg shadow-slate-900/10 transition hover:bg-card"
+            aria-label="Share"
+          >
+            <Share2 className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="absolute inset-x-4 bottom-4 rounded-[2rem] border border-border bg-card/95 p-5 shadow-xl shadow-slate-950/10 backdrop-blur-sm">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-primary">{spot.priceRange}</p>
+              <h1 className="mt-3 text-3xl font-extrabold text-foreground">{spot.name}</h1>
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  {spot.area}
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-secondary/90 px-3 py-1 text-[11px] font-semibold text-secondary-foreground">
+                  <Star className="h-3.5 w-3.5 fill-current text-primary" />
+                  {spot.rating}
+                </span>
+                <span className="rounded-full bg-secondary/90 px-3 py-1 text-[11px] font-semibold text-secondary-foreground">{spot.reviewCount} reviews</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2 text-right">
+              <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Open now</span>
+              <span className="rounded-2xl bg-green-50 px-3 py-2 text-xs font-semibold text-green-700">Open until 10:30 PM</span>
+            </div>
           </div>
-        )}
-        {/* Back button */}
-        <Link
-          to="/app/home"
-          className="absolute top-4 left-4 w-9 h-9 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow text-foreground hover:bg-card transition"
-          aria-label="Go back"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Link>
-        <button
-          className="absolute top-4 right-4 w-9 h-9 bg-card/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow text-foreground hover:bg-card transition"
-          aria-label="Share"
-        >
-          <Share2 className="h-4 w-4" />
-        </button>
-        <span className="absolute bottom-4 right-4 bg-card/90 text-foreground text-sm font-extrabold px-3 py-1.5 rounded-full shadow">
-          {spot.priceRange}
-        </span>
+        </div>
       </div>
 
-      <main className="max-w-lg mx-auto px-4">
-        {/* Spot name + rating */}
-        <div className="pt-5 pb-2">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h1 className="text-2xl font-extrabold text-foreground leading-tight">{spot.name}</h1>
-              <div className="flex items-center gap-1.5 mt-1">
-                <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">{spot.area}</span>
-              </div>
+      <main className="max-w-4xl mx-auto px-4 pt-6">
+        <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="space-y-5">
+            <div className="rounded-[2rem] border border-border bg-card p-5 shadow-sm shadow-slate-900/5">
+              <h2 className="text-lg font-extrabold text-foreground">About this place</h2>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                A beloved neighborhood spot known for generous portions and honest home-style cooking. Popular among locals for consistently great value and fast service.
+              </p>
             </div>
-            <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-1 bg-primary/10 px-3 py-1.5 rounded-xl">
-                <Star className="h-4 w-4 fill-primary text-primary" />
-                <span className="font-extrabold text-foreground">{spot.rating}</span>
-              </div>
-              <span className="text-xs text-muted-foreground">{spot.reviewCount} reviews</span>
-            </div>
-          </div>
 
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {spot.tags.map((tag) => (
-              <span key={tag} className="text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground border border-border">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Description */}
-        <div className="mt-4 p-4 bg-card rounded-2xl border border-border">
-          <h2 className="font-extrabold text-sm text-foreground mb-2">About this place</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            A beloved neighbourhood spot known for its generous portions and home-style cooking.
-            Popular among students for being consistently great value — you leave full, you leave happy.
-            No frills, no fuss. Just honest food.
-          </p>
-        </div>
-
-        {/* Open hours */}
-        <div className="mt-3 flex items-center gap-3 p-4 bg-card rounded-2xl border border-border">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Clock className="h-4.5 w-4.5 h-[18px] w-[18px] text-primary" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground font-medium">Open hours</p>
-            <p className="text-sm font-bold text-foreground">7:00 AM – 10:30 PM</p>
-          </div>
-          <span className="ml-auto text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">Open now</span>
-        </div>
-
-        {/* Rate button */}
-        <button
-          onClick={() => setShowRateModal(true)}
-          className="w-full mt-5 bg-primary text-primary-foreground font-bold py-4 rounded-2xl hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20 text-sm flex items-center justify-center gap-2"
-        >
-          <Star className="h-4.5 w-4.5 h-[18px] w-[18px]" />
-          Rate this place
-        </button>
-
-        {/* Reviews */}
-        <section className="mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-extrabold text-base text-foreground">Reviews</h2>
-            <span className="text-xs text-muted-foreground">{MOCK_REVIEWS.length} reviews</span>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            {MOCK_REVIEWS.map((review) => (
-              <div key={review.id} className="bg-card rounded-2xl border border-border p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary text-sm flex-shrink-0">
-                    {review.userInitial}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="font-bold text-sm text-foreground">{review.userName}</p>
-                      <span className="text-xs text-muted-foreground flex-shrink-0">{review.date}</span>
-                    </div>
-                    <div className="flex gap-0.5 my-1.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className={`h-3 w-3 ${i < review.rating ? "fill-primary text-primary" : "text-border"}`} />
-                      ))}
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{review.comment}</p>
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      {review.tags.map((t) => (
-                        <span key={t} className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+            <div className="rounded-[2rem] border border-border bg-card p-5 shadow-sm shadow-slate-900/5">
+              <div className="flex items-center gap-3">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-primary/10 text-primary">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">Open hours</p>
+                  <p className="mt-1 text-sm font-bold text-foreground">7:00 AM – 10:30 PM</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+              <div className="mt-4 rounded-3xl bg-secondary/80 px-4 py-3 text-sm text-muted-foreground">
+                Consistently open through the evening with curated comfort food favorites and fast pickup service.
+              </div>
+            </div>
 
-        {/* Report link */}
-        <div className="mt-6 mb-2 text-center">
-          <button className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors">
-            <Flag className="h-3 w-3" />
-            Report this listing
-          </button>
+            <button
+              onClick={() => setShowRateModal(true)}
+              className="w-full rounded-[1.5rem] bg-primary px-5 py-4 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/15 transition hover:bg-primary/90"
+            >
+              Rate this place
+            </button>
+          </div>
+
+          <div className="space-y-5">
+            <div className="rounded-[2rem] border border-border bg-card p-5 shadow-sm shadow-slate-900/5">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-lg font-extrabold text-foreground">Reviews</h2>
+                <span className="text-sm text-muted-foreground">{MOCK_REVIEWS.length} reviews</span>
+              </div>
+              <div className="mt-5 space-y-4">
+                {MOCK_REVIEWS.map((review) => (
+                  <div key={review.id} className="rounded-[1.5rem] border border-border bg-secondary/85 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-3xl bg-primary/15 text-primary font-bold">
+                        {review.userInitial}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-semibold text-foreground">{review.userName}</p>
+                          <span className="text-xs text-muted-foreground">{review.date}</span>
+                        </div>
+                        <div className="mt-2 flex gap-1.5 text-primary">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-3.5 w-3.5 ${i < review.rating ? "fill-primary text-primary" : "text-border"}`}
+                            />
+                          ))}
+                        </div>
+                        <p className="mt-3 text-sm leading-7 text-muted-foreground">{review.comment}</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {review.tags.map((t) => (
+                            <span key={t} className="rounded-full bg-card px-3 py-1 text-[11px] font-semibold text-muted-foreground shadow-sm">
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-border bg-card p-5 text-center shadow-sm shadow-slate-900/5">
+              <button className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90">
+                <Flag className="h-4 w-4" />
+                Report this listing
+              </button>
+            </div>
+          </div>
         </div>
       </main>
 
       {showRateModal && <RateReviewModal onClose={() => setShowRateModal(false)} spotName={spot.name} />}
       <BottomNav />
     </div>
-  )
+  );
 }

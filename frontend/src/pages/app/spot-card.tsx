@@ -1,54 +1,46 @@
-
-
 import { Link } from "react-router-dom";
 import { Star, MapPin } from "lucide-react";
 import { cn } from "../../../lib/utils";
-import type {SpotRating,Tags} from '../../../../backend/src/generated/prisma/client'
+import type { FoodSpotDTO } from "../../../../shared/food-spots.type";
 
-export interface SpotCardData {
-
-  id: string
-  name: string
-  location: string
-  spotRating: SpotRating
-  tags: Tags[]
-  imageUrl?: string
-
-}
 
 interface SpotCardProps {
-  spot: SpotCardData
-  variant?: "horizontal" | "vertical"
-  className?: string
+  spot: FoodSpotDTO;
+  variant?: "horizontal" | "vertical";
+  className?: string;
 }
 
 export function SpotCard({ spot, variant = "vertical", className }: SpotCardProps) {
+  const tagClasses = "inline-flex items-center rounded-full bg-secondary/90 px-3 py-1 text-[11px] font-semibold text-secondary-foreground";
+
   if (variant === "horizontal") {
     return (
-      <Link to={`/spot/${spot.id}`} className={cn("block w-44 flex-shrink-0", className)}>
-        <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow">
-          <div className="relative h-28 bg-secondary overflow-hidden">
+      <Link to={`/spot/${spot.id}`} className={cn("group block w-44 flex-shrink-0 transition-transform duration-300 hover:-translate-y-1", className)}>
+        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-shadow duration-300 group-hover:shadow-md">
+          <div className="relative h-28 overflow-hidden bg-slate-100">
             {spot.imageUrl ? (
-              <img src={spot.imageUrl} alt={spot.name} className="w-full h-full object-cover" />
+              <img src={spot.imageUrl} alt={spot.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+              <div className="flex h-full w-full items-center justify-center bg-primary/10">
                 <span className="text-3xl">🍽️</span>
               </div>
             )}
+            <div className="absolute inset-x-0 bottom-0 mx-3 mb-3 rounded-2xl bg-background/90 px-3 py-2 text-[11px] font-semibold text-foreground backdrop-blur">
+              <div className="flex items-center gap-1">
+                <MapPin className="h-3 w-3 text-muted-foreground" />
+                <span className="truncate">{spot.location}</span>
+              </div>
+            </div>
           </div>
-          <div className="p-2.5">
-            <p className="font-bold text-sm text-foreground leading-tight line-clamp-1">{spot.name}</p>
-            <div className="flex items-center gap-1 mt-1">
-              <MapPin className="h-3 w-3 text-muted-foreground" />
-            </div>
-            <div className="flex items-center gap-1 mt-1.5">
+          <div className="space-y-2 p-3">
+            <p className="text-sm font-bold text-foreground leading-tight line-clamp-2">{spot.name}</p>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Star className="h-3 w-3 fill-primary text-primary" />
-              <span className="text-xs font-semibold text-foreground">{spot.spotRating}</span>
-
+              <span>{spot.spotRating}</span>
             </div>
-            <div className="flex flex-wrap gap-1 mt-2">
+            <div className="flex flex-wrap gap-1">
               {spot.tags.slice(0, 2).map((tag) => (
-                <span key={tag} className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-secondary text-secondary-foreground">
+                <span key={tag} className={tagClasses}>
                   {tag}
                 </span>
               ))}
@@ -56,48 +48,46 @@ export function SpotCard({ spot, variant = "vertical", className }: SpotCardProp
           </div>
         </div>
       </Link>
-    )
+    );
   }
 
   return (
-    <Link to={`/spot/${spot.id}`} className={cn("block", className)}>
-      <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow">
-        <div className="relative h-40 bg-secondary overflow-hidden">
+    <Link to={`/spot/${spot.id}`} className={cn("group block transition-transform duration-300 hover:-translate-y-1", className)}>
+      <div className="overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-sm transition-shadow duration-300 group-hover:shadow-lg">
+        <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
           {spot.imageUrl ? (
-            <img src={spot.imageUrl} alt={spot.name} className="w-full h-full object-cover" />
+            <img src={spot.imageUrl} alt={spot.name} className="h-full w-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+            <div className="flex h-full w-full items-center justify-center bg-primary/10">
               <span className="text-5xl">🍽️</span>
             </div>
           )}
-         
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
+          <div className="absolute left-4 top-4 rounded-full bg-background/90 px-3 py-2 text-xs font-semibold text-foreground backdrop-blur">
+            {spot.location}
+          </div>
+          <div className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-lg shadow-primary/20">
+            <Star className="h-3 w-3 fill-current" />
+            {spot.spotRating}
+          </div>
         </div>
-        <div className="p-4">
-          <div className="flex items-start justify-between gap-2">
-            <p className="font-bold text-base text-foreground leading-tight">{spot.name}</p>
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <Star className="h-3.5 w-3.5 fill-primary text-primary" />
-              <span className="text-sm font-semibold text-foreground">{spot.spotRating}</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-1 mt-1">
-            <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-           
-            <span className="text-muted-foreground mx-1">·</span>
 
+        <div className="space-y-3 p-5">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="text-base font-bold text-foreground leading-tight">{spot.name}</h3>
           </div>
-          <div className="flex flex-wrap gap-1.5 mt-3">
+          <div className="flex flex-wrap gap-2">
             {spot.tags.slice(0, 3).map((tag) => (
-              <span key={tag} className="text-xs font-medium px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground">
+              <span key={tag} className={tagClasses}>
                 {tag}
               </span>
             ))}
           </div>
-          <button className="mt-3 w-full text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors py-2 rounded-xl">
-            View Details
+          <button className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90">
+            View details
           </button>
         </div>
       </div>
     </Link>
-  )
+  );
 }

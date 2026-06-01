@@ -3,10 +3,10 @@ import { auth } from "../../lib/auth/auth";
 import type { Handler } from "../../types";
 import { verifyOtp, generateOtp } from "./auth.service";
 
-export const VerifyOtpController = async ({
+export const VerifyOtpController : Handler = async (
   req,
   res
-}: Handler) => {
+) => {
   try {
     const session = await auth.api.getSession({
       headers: req.headers,
@@ -41,7 +41,7 @@ export const VerifyOtpController = async ({
 };
 
 
-export const GenerateOtpController = async ({ req, res }: Handler) => {
+export const GenerateOtpController : Handler= async (req,res) => {
   try {
     console.log("📩 [OTP-GENERATE] hit");
 
