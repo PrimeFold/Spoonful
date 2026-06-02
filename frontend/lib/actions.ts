@@ -48,7 +48,19 @@ export const getUserSubmissions = async({search,tags,rating,page,limit}:{search?
     return data;
 }
 
+export const AddFoodSpot = async(name: string, location: string, rating?: SpotRatingDTO, tags?: TagsDTO[]) => {
+    const payload = {
+        data: {
+            spotName: name,
+            spotRating: rating,
+            tags: tags ?? [],
+            location,
+        }
+    } as const;
 
+    const { data } = await api.post('/app/add-food-spot', payload);
+    return data;
+}
 
 
 

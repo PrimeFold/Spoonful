@@ -135,7 +135,7 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-destructive transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-destructive transition-colors cursor-pointer hover:"
             aria-label="Log out"
           >
             <LogOut className="h-4 w-4" />
@@ -148,7 +148,7 @@ export default function ProfilePage() {
         {/* Profile card */}
         <div className="mt-5 bg-card rounded-3xl border border-border p-5">
           <div className="flex flex-col sm:flex-row items-start gap-4">
-            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center font-extrabold text-primary text-2xl flex-shrink-0">
+            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center font-extrabold text-primary text-2xl shrink-0">
               {user?.name?.charAt(0).toUpperCase() ?? user?.email?.charAt(0).toUpperCase() ?? "U"}
             </div>
 
@@ -160,14 +160,14 @@ export default function ProfilePage() {
                   </p>
 
                   <div className="flex items-center gap-1.5 mt-1">
-                    <GraduationCap className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                    <GraduationCap className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span className="text-sm text-muted-foreground truncate">
                       {user?.email ?? "No email provided"}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <MapPin className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                    <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span className="text-sm text-muted-foreground truncate">
                       {user?.emailVerified ? "Verified account" : "Email not verified"}
                     </span>

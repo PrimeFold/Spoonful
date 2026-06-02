@@ -3,9 +3,35 @@ import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { cn } from "../../../lib/utils"
 import { BottomNav } from "./bottom-nav"
+import { useMutation } from "@tanstack/react-query"
+import { AddFoodSpot } from "../../../lib/actions"
+import type { TagsDTO, SpotRatingDTO } from "../../../../shared/food-spots.type"
+import toast from "react-hot-toast"
+import LoaderComponent from "../../../components/loader"
 
-const SPOT_TAGS = ["Veg", "Non-Veg", "North Indian", "South Indian", "Snacks", "Tiffin", "Fast Food", "Chinese", "Breakfast", "Late Night", "Budget ₹100", "Home Style"]
-const PRICE_RANGES = ["₹", "₹₹", "₹₹₹"]
+const SPOT_TAGS: { label: string; value: TagsDTO }[] = [
+  { label: "Veg", value: "VEG" },
+  { label: "Non-Veg", value: "NON_VEG" },
+  { label: "North Indian", value: "NORTH_INDIAN" },
+  { label: "South Indian", value: "SOUTH_INDIAN" },
+  { label: "Snacks", value: "SNACKS" },
+  { label: "Tiffin", value: "TIFFIN" },
+  { label: "Fast Food", value: "SNACKS" },
+  { label: "Chinese", value: "SNACKS" },
+  { label: "Breakfast", value: "HOME_STYLE" },
+  { label: "Late Night", value: "LATE_NIGHT" },
+  { label: "Budget ₹100", value: "BUDGET" },
+  { label: "Home Style", value: "HOME_STYLE" },
+]
+
+const RATINGS: { label: string; value: SpotRatingDTO }[] = [
+  { label: "👎 Bad", value: "ONESTAR" },
+  { label: "😒 Okish", value: "TWOSTAR" },
+  { label: "👍 Good enough", value: "THREESTAR" },
+  { label: "😋 Great", value: "FOURSTAR" },
+  { label: "🏆 Delicious", value: "FIVESTAR" },
+]
+
 
 export default function AddSpotPage() {
   const navigate = useNavigate()
@@ -15,18 +41,17 @@ export default function AddSpotPage() {
     name: "",
     area: "",
     description: "",
-    priceRange: "",
     openFrom: "07:00",
     openTo: "22:00",
   })
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<TagsDTO[]>([])
+  const [selectedRating, setSelectedRating] = useState<SpotRatingDTO | undefined>(undefined)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [dragging, setDragging] = useState(false)
 
-  const toggleTag = (tag: string) =>
-    setSelectedTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])
 
+  
   const handlePhoto = (file: File) => {
     const url = URL.createObjectURL(file)
     setPhotoPreview(url)
@@ -39,11 +64,37 @@ export default function AddSpotPage() {
     if (file && file.type.startsWith("image/")) handlePhoto(file)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => navigate("/app/home"), 2000)
+  const mutation  = useMutation({
+    mutationFn:async()=>AddFoodSpot(form.name,form.area,selectedRating,selectedTags),
+    onSuccess:()=>{
+      toast.success("Food-spot Added successfully!"),
+      setTimeout(() => navigate("/app/home"), 2000)
+    }
+  })
+
+  function toggleTag(tagValue: TagsDTO) {
+    setSelectedTags((prev) => (prev.includes(tagValue) ? prev.filter((t) => t !== tagValue) : [...prev, tagValue]))
   }
+
+
+
+  const handleSubmit = async(e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      mutation.mutate;
+      if(mutation.isError){
+        toast.error(((mutation.error) as Error).message);
+      }
+      while(mutation.isPending){
+        return <LoaderComponent/>
+      }
+      setSubmitted(true)
+    } catch (error) {
+      toast.error((error as Error).message)
+    }
+    
+  }
+
 
   if (submitted) {
     return (
@@ -121,47 +172,17 @@ export default function AddSpotPage() {
               className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
             />
           </div>
-
-          {/* Price range */}
-          <div>
-            <p className="text-sm font-bold text-foreground mb-2">
-              Price range <span className="text-destructive">*</span>
-            </p>
-            <div className="flex gap-3">
-              {PRICE_RANGES.map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setForm({ ...form, priceRange: p })}
-                  className={cn(
-                    "flex-1 py-3 rounded-xl font-extrabold text-base border transition-all",
-                    form.priceRange === p
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card border-border text-foreground hover:bg-secondary"
-                  )}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-3 mt-1.5 text-center">
-              <p className="flex-1 text-xs text-muted-foreground">Under ₹100</p>
-              <p className="flex-1 text-xs text-muted-foreground">₹100–250</p>
-              <p className="flex-1 text-xs text-muted-foreground">Above ₹250</p>
-            </div>
-          </div>
-
           {/* Tags */}
           <div>
             <p className="text-sm font-bold text-foreground mb-2">Tags</p>
             <div className="flex flex-wrap gap-2">
-              {SPOT_TAGS.map((tag) => {
-                const sel = selectedTags.includes(tag)
+              {SPOT_TAGS.map(({ label, value }) => {
+                const sel = selectedTags.includes(value)
                 return (
                   <button
-                    key={tag}
+                    key={value}
                     type="button"
-                    onClick={() => toggleTag(tag)}
+                    onClick={() => toggleTag(value)}
                     className={cn(
                       "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
                       sel
@@ -170,10 +191,32 @@ export default function AddSpotPage() {
                     )}
                   >
                     {sel && <Check className="h-3 w-3" />}
-                    {tag}
+                    {label}
                   </button>
                 )
               })}
+            </div>
+          </div>
+
+          {/* Rating */}
+          <div>
+            <p className="text-sm font-bold text-foreground mb-2">Rating</p>
+            <div className="flex flex-wrap gap-2">
+              {RATINGS.map(({ label, value }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setSelectedRating((prev) => (prev === value ? undefined : value))}
+                  className={cn(
+                    "px-3 py-2 rounded-xl text-xs font-semibold transition-colors",
+                    selectedRating === value
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-foreground hover:bg-secondary/80"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -249,10 +292,10 @@ export default function AddSpotPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={!form.name || !form.area || !form.priceRange}
+            disabled={!form.name || !form.area }
             className={cn(
               "w-full font-bold py-4 rounded-2xl text-sm transition-all mt-2",
-              form.name && form.area && form.priceRange
+              form.name && form.area
                 ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20"
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             )}

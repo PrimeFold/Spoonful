@@ -119,14 +119,6 @@ export default function HomePage() {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <button
-              className="relative w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Notifications"
-            >
-              <Bell className="h-4 w-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full border-2 border-background" />
-            </button>
-
             <Link to="/app/profile">
               <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center font-bold text-primary-foreground text-sm ring-2 ring-primary/30 hover:ring-primary/60 transition-all">
                 {user?.name?.charAt(0)?.toUpperCase() || "U"}
