@@ -3,10 +3,14 @@ import {SpotRating,Tags} from '../backend/src/generated/prisma/client'
 export interface FoodSpotDTO {
   id: string;
   name: string;
-  location: string;
+  location: {
+    locality: string;
+    town?: string | null;
+    city: string;
+    state: string;
+  };
   spotRating: SpotRating;
   tags: Tags[];
-  imageUrl?:string;
 }
 export const TagsDTO = {
   TIFFIN: 'TIFFIN',
@@ -32,3 +36,5 @@ export const SpotRatingDTO = {
 } as const
 
 export type SpotRatingDTO = (typeof SpotRating)[keyof typeof SpotRating]
+
+

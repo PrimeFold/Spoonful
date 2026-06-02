@@ -15,8 +15,3 @@ export interface PaginationMeta {
   total: number;
   hasMore: boolean;
 }
-
-export interface PaginatedResponse<T> {
-  items: T[];
-  pagination: PaginationMeta;
-}

@@ -63,7 +63,7 @@ model Location{
   town String?
   city String
   state String 
-  foodSpot FoodSpots?
+  foodSpot FoodSpots[]
 }
 
 model Session {
