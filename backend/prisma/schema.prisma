@@ -48,12 +48,22 @@ model FoodSpots {
   userId     String
   user       User       @relation(fields: [userId], references: [id])
   name       String
-  location   String
+  locationId String     @unique
+  location   Location   @relation(fields: [locationId],references: [id])
   spotRating SpotRating
   tags       Tags[]
 
-  @@unique([name, location])
+  @@unique([name])
   @@index([name])
+}
+
+model Location{
+  id String @id @default(cuid())
+  locality String 
+  town String?
+  city String
+  state String 
+  foodSpot FoodSpots?
 }
 
 model Session {
