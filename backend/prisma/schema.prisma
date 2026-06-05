@@ -17,6 +17,7 @@ enum SpotRating{
 }
 
 enum Tags{
+  BREAKFAST
   TIFFIN
   NON_VEG
   VEG
@@ -60,7 +61,7 @@ model FoodSpots {
 model Location{
   id String @id @default(cuid())
   locality String 
-  town String?
+  town String? 
   city String
   state String 
   foodSpot FoodSpots[]

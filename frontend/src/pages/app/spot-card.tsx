@@ -12,6 +12,10 @@ interface SpotCardProps {
 
 export function SpotCard({ spot, variant = "vertical", className }: SpotCardProps) {
   const tagClasses = "inline-flex items-center rounded-full bg-secondary/90 px-3 py-1 text-[11px] font-semibold text-secondary-foreground";
+  const formatLocation = (location: FoodSpotDTO['location']) => {
+    const parts = [location.locality, location.town, location.city].filter(Boolean);
+    return parts.join(', ');
+  };
 
   if (variant === "horizontal") {
     return (
@@ -28,7 +32,7 @@ export function SpotCard({ spot, variant = "vertical", className }: SpotCardProp
             <div className="absolute inset-x-0 bottom-0 mx-3 mb-3 rounded-2xl bg-background/90 px-3 py-2 text-[11px] font-semibold text-foreground backdrop-blur">
               <div className="flex items-center gap-1">
                 <MapPin className="h-3 w-3 text-muted-foreground" />
-                <span className="truncate">{spot.location}</span>
+                <span className="truncate">{formatLocation(spot.location)}</span>
               </div>
             </div>
           </div>
@@ -64,7 +68,7 @@ export function SpotCard({ spot, variant = "vertical", className }: SpotCardProp
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
           <div className="absolute left-4 top-4 rounded-full bg-background/90 px-3 py-2 text-xs font-semibold text-foreground backdrop-blur">
-            {spot.location}
+            {spot.location.locality}
           </div>
           <div className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-lg shadow-primary/20">
             <Star className="h-3 w-3 fill-current" />

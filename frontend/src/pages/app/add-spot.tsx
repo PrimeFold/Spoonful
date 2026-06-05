@@ -9,6 +9,8 @@ import type { TagsDTO, SpotRatingDTO } from "../../../../shared/food-spots.type"
 import toast from "react-hot-toast"
 import LoaderComponent from "../../../components/loader"
 
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
+
 const SPOT_TAGS: { label: string; value: TagsDTO }[] = [
   { label: "Veg", value: "VEG" },
   { label: "Non-Veg", value: "NON_VEG" },
@@ -16,9 +18,7 @@ const SPOT_TAGS: { label: string; value: TagsDTO }[] = [
   { label: "South Indian", value: "SOUTH_INDIAN" },
   { label: "Snacks", value: "SNACKS" },
   { label: "Tiffin", value: "TIFFIN" },
-  { label: "Fast Food", value: "SNACKS" },
-  { label: "Chinese", value: "SNACKS" },
-  { label: "Breakfast", value: "HOME_STYLE" },
+  { label: "Breakfast", value: "BREAKFAST" },
   { label: "Late Night", value: "LATE_NIGHT" },
   { label: "Budget ₹100", value: "BUDGET" },
   { label: "Home Style", value: "HOME_STYLE" },
@@ -32,6 +32,33 @@ const RATINGS: { label: string; value: SpotRatingDTO }[] = [
   { label: "🏆 Delicious", value: "FIVESTAR" },
 ]
 
+const STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Tamil Nadu",
+  "Telangana",
+  "Uttar Pradesh",
+  "West Bengal",
+]
+
+
+
+
 
 export default function AddSpotPage() {
   const navigate = useNavigate()
@@ -39,7 +66,12 @@ export default function AddSpotPage() {
 
   const [form, setForm] = useState({
     name: "",
-    area: "",
+    location :{
+        locality:"",
+        town: "",
+        city : "",
+        state:"",
+      },
     description: "",
     openFrom: "07:00",
     openTo: "22:00",
@@ -64,13 +96,17 @@ export default function AddSpotPage() {
     if (file && file.type.startsWith("image/")) handlePhoto(file)
   }
 
-  const mutation  = useMutation({
-    mutationFn:async()=>AddFoodSpot(form.name,form.area,selectedRating,selectedTags),
-    onSuccess:()=>{
-      toast.success("Food-spot Added successfully!"),
-      setTimeout(() => navigate("/app/home"), 2000)
-    }
-  })
+  const mutation = useMutation({
+  mutationFn: async () => AddFoodSpot(form.name, form.location, selectedRating, selectedTags),
+  onSuccess: () => {
+    toast.success("Spot added successfully!")
+    setSubmitted(true)
+    setTimeout(() => navigate("/app/home"), 2000)
+  },
+  onError: (error: Error) => {
+    toast.error(error.message)
+  },
+})
 
   function toggleTag(tagValue: TagsDTO) {
     setSelectedTags((prev) => (prev.includes(tagValue) ? prev.filter((t) => t !== tagValue) : [...prev, tagValue]))
@@ -80,20 +116,16 @@ export default function AddSpotPage() {
 
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitted(true);
+
     try {
-      mutation.mutate;
-      if(mutation.isError){
-        toast.error(((mutation.error) as Error).message);
-      }
-      while(mutation.isPending){
-        return <LoaderComponent/>
-      }
-      setSubmitted(true)
+      await mutation.mutateAsync(); 
+
     } catch (error) {
       toast.error((error as Error).message)
     }
-    
   }
+  
 
 
   if (submitted) {
@@ -142,35 +174,88 @@ export default function AddSpotPage() {
             />
           </div>
 
-          {/* Area */}
-          <div>
-            <label htmlFor="spot-area" className="block text-sm font-bold text-foreground mb-1.5">
-              Area / Locality <span className="text-destructive">*</span>
-            </label>
-            <input
-              id="spot-area"
-              type="text"
-              required
-              placeholder="e.g. Koramangala, HSR Layout"
-              value={form.area}
-              onChange={(e) => setForm({ ...form, area: e.target.value })}
-              className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
+          {/* Location */}
+          <div className="overflow-visible">
+            <p className="text-sm font-bold text-foreground mb-2">
+              Location <span className="text-destructive">*</span>
+            </p>
 
-          {/* Description */}
-          <div>
-            <label htmlFor="spot-desc" className="block text-sm font-bold text-foreground mb-1.5">
-              Description
-            </label>
-            <textarea
-              id="spot-desc"
-              rows={3}
-              placeholder="What makes this place special? What should students try?"
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+              <input
+                type="text"
+                placeholder="Locality"
+                value={form.location.locality}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    location:{
+                      ...form.location,
+                      locality:e.target.value
+                    }
+                  })
+                }
+                className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm"
+              />
+
+              <input
+                type="text"
+                placeholder="Town (optional)"
+                value={form.location.town}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    location:{
+                      ...form.location,
+                      town:e.target.value
+                    }
+                  })
+                }
+                className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm"
+              />
+
+              <input
+                type="text"
+                placeholder="City"
+                value={form.location.city}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    location:{
+                      ...form.location,
+                      city:e.target.value
+                    }
+                  })
+                }
+                className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm"
+              />
+
+              <Select
+                value={form.location.state}
+                onValueChange={(value)=>
+                  setForm({
+                    ...form,
+                    location:{
+                      ...form.location,
+                      state:value
+                    }
+                  })
+                }
+              >
+               <SelectTrigger className="w-full bg-card border border-border rounded-2xl px-4 py-3 text-sm h-[50px]">
+                  <SelectValue placeholder="State" />
+                </SelectTrigger>
+                <SelectContent position="popper" className="rounded-xl">
+                  <SelectGroup>
+                    {STATES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           {/* Tags */}
           <div>
@@ -184,7 +269,7 @@ export default function AddSpotPage() {
                     type="button"
                     onClick={() => toggleTag(value)}
                     className={cn(
-                      "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
+                      "cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all",
                       sel
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-card border-border text-foreground hover:bg-secondary"
@@ -208,7 +293,7 @@ export default function AddSpotPage() {
                   type="button"
                   onClick={() => setSelectedRating((prev) => (prev === value ? undefined : value))}
                   className={cn(
-                    "px-3 py-2 rounded-xl text-xs font-semibold transition-colors",
+                    "px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer",
                     selectedRating === value
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-foreground hover:bg-secondary/80"
@@ -260,6 +345,7 @@ export default function AddSpotPage() {
                 <button
                   type="button"
                   onClick={() => setPhotoPreview(null)}
+                  disabled={true}
                   className="absolute top-2 right-2 w-8 h-8 bg-foreground/60 text-background rounded-full flex items-center justify-center hover:bg-foreground/80 transition"
                   aria-label="Remove photo"
                 >
@@ -292,10 +378,10 @@ export default function AddSpotPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={!form.name || !form.area }
+            disabled={!form.name ||  !form.location.locality || !form.location.city || !form.location.state  }
             className={cn(
-              "w-full font-bold py-4 rounded-2xl text-sm transition-all mt-2",
-              form.name && form.area
+              "w-full font-bold py-4 rounded-2xl text-sm transition-all mt-2 cursor-pointer",
+              form.name && form.location.city
                 ? "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20"
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             )}

@@ -120,7 +120,7 @@ const Verification = () => {
 
 const StyledWrapper = styled.div`
   .otp-Form {
-    width: 230px;
+    width: 330px;
     height: 300px;
     background-color: rgb(255, 255, 255);
     display: flex;

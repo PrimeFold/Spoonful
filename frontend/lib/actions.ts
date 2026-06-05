@@ -1,5 +1,13 @@
-import { SpotRatingDTO, TagsDTO } from "../../shared/food-spots.type";
+
+import type { SpotRatingDTO, TagsDTO } from "../../shared/food-spots.type";
 import { api } from "./axios";
+
+interface Location{
+    locality:string,
+    town?:string,
+    city:string,
+    state:string
+}
 
 export const getAllFoodSpots = async({search,tags,rating,page,limit}:{search?:string ,tags?:TagsDTO[],rating?:SpotRatingDTO,page?:number,limit:number})=>{
     const params = {
@@ -48,17 +56,12 @@ export const getUserSubmissions = async({search,tags,rating,page,limit}:{search?
     return data;
 }
 
-export const AddFoodSpot = async(name: string, location: string, rating?: SpotRatingDTO, tags?: TagsDTO[]) => {
+export const AddFoodSpot = async(name: string, location:Location, rating?: SpotRatingDTO, tags?: TagsDTO[]) => {
     const payload = {
-        data: {
-            spotName: name,
-            spotRating: rating,
-            tags: tags ?? [],
-            location,
-        }
-    } as const;
-
-    const { data } = await api.post('/app/add-food-spot', payload);
+        name, location,spotRating:rating, tags
+    }
+    console.log("payload : ",payload)
+    const { data } = await api.post('/app/food-spot',payload);
     return data;
 }
 

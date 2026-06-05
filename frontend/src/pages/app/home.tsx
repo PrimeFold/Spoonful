@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Bell, Plus, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Plus, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import { BottomNav } from "./bottom-nav";
 import { SpotCard } from "./spot-card";
 import { authClient } from "../../../lib/auth";
@@ -11,6 +11,7 @@ import LoaderComponent from "../../../components/loader";
 import type { FoodSpotDTO,  SpotRatingDTO,  TagsDTO } from "../../../../shared/food-spots.type";
 
 const TAG_LABELS: Record<TagsDTO, string> = {
+  BREAKFAST:"Breakfast",
   BUDGET: "💰 Budget",
   NON_VEG: "🍖 Non-Veg",
   HOME_STYLE: "🏠 Home Style",

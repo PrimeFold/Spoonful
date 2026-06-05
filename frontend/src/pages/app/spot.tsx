@@ -2,13 +2,46 @@ import { ArrowLeft, Share2, MapPin, Star, Clock, Flag } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { RateReviewModal } from "./rate-review-modal";
-import { MOCK_SPOTS, MOCK_REVIEWS } from "../../../lib/mock-data";
 import { BottomNav } from "./bottom-nav";
+import { useQuery } from "@tanstack/react-query";
+import { getFoodSpotById } from "../../../lib/actions";
+import toast from "react-hot-toast";
+import LoaderComponent from "../../../components/loader";
 
 export default function SpotDetailPage() {
   const { id } = useParams<{ id: string }>();
 
-  const spot = MOCK_SPOTS.find((s) => s.id === id) || MOCK_SPOTS[0];
+  if(id == undefined){
+    return toast.error("Spot id doesn't exist")
+  }
+
+  const { data , error , isLoading , isError} = useQuery({
+    queryKey:[`spot`,id],
+    queryFn:()=>getFoodSpotById(id)
+  })
+  const spot = data;
+
+  if(isLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-background">
+        <LoaderComponent/>
+      </main>
+    )
+  }
+
+  if(isError){
+    return(
+       <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="text-center space-y-3">
+          <div className="text-4xl">⚠️</div>
+          <p className="text-sm font-semibold text-red-500">
+            {(error as Error)?.message || "Something went wrong"}
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   const [showRateModal, setShowRateModal] = useState(false);
 
   return (
@@ -100,46 +133,6 @@ export default function SpotDetailPage() {
           </div>
 
           <div className="space-y-5">
-            <div className="rounded-[2rem] border border-border bg-card p-5 shadow-sm shadow-slate-900/5">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="text-lg font-extrabold text-foreground">Reviews</h2>
-                <span className="text-sm text-muted-foreground">{MOCK_REVIEWS.length} reviews</span>
-              </div>
-              <div className="mt-5 space-y-4">
-                {MOCK_REVIEWS.map((review) => (
-                  <div key={review.id} className="rounded-[1.5rem] border border-border bg-secondary/85 p-4">
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-3xl bg-primary/15 text-primary font-bold">
-                        {review.userInitial}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between gap-3">
-                          <p className="text-sm font-semibold text-foreground">{review.userName}</p>
-                          <span className="text-xs text-muted-foreground">{review.date}</span>
-                        </div>
-                        <div className="mt-2 flex gap-1.5 text-primary">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-3.5 w-3.5 ${i < review.rating ? "fill-primary text-primary" : "text-border"}`}
-                            />
-                          ))}
-                        </div>
-                        <p className="mt-3 text-sm leading-7 text-muted-foreground">{review.comment}</p>
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {review.tags.map((t) => (
-                            <span key={t} className="rounded-full bg-card px-3 py-1 text-[11px] font-semibold text-muted-foreground shadow-sm">
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             <div className="rounded-[2rem] border border-border bg-card p-5 text-center shadow-sm shadow-slate-900/5">
               <button className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90">
                 <Flag className="h-4 w-4" />

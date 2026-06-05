@@ -14,7 +14,7 @@ router.get('/app/get-food-spot/:id',authMiddleware,FoodSpotController.getFoodSpo
 router.get('/app/my-food-spots',authMiddleware,limiter,FoodSpotController.getFoodSpotsByUserIdController);
 
 //All POST routes
-router.post('/app/add-food-spot',authMiddleware,limiter,FoodSpotController.AddFoodSpotController);
+router.post('/app/food-spot',authMiddleware,limiter,FoodSpotController.AddFoodSpotController);
 router.put('/app/add-food-rating',authMiddleware,limiter,FoodSpotController.assignRatingController);
 router.post('/otp/generate', GenerateOtpController);
 router.post('/otp/verify', VerifyOtpController)

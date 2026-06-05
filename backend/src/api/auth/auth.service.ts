@@ -2,6 +2,7 @@ import { prisma } from "../../lib/auth/auth";
 import { transporter } from "../../lib/auth/nodemailer";
 import { emailHtml } from "../../lib/emailHtml";
 import crypto from 'crypto'
+import { AuthRepository } from "./auth.repository";
 
 export const generateOtp = async (email: string) => {
   const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -11,13 +12,7 @@ export const generateOtp = async (email: string) => {
     .update(code)
     .digest("hex");
 
-  await prisma.oTP.create({
-    data: {
-      email,
-      otp: hashedOtp,
-      expireAt: new Date(Date.now() + 10 * 60 * 1000),
-    },
-  });
+  await AuthRepository.SaveOTPtoDb(hashedOtp,email);
 
   await transporter.sendMail({
     from: `Spoonfull <${process.env.SMPT_USER}>`,
@@ -32,51 +27,58 @@ export const generateOtp = async (email: string) => {
   };
 };
 
-export const verifyOtp = async (
-  email: string,
-  userOtp: string
-) => {
+export const verifyOtp = async ( email:string,  userOtp:string ) => {
   const hashedUserOtp = crypto.createHash("sha256").update(userOtp).digest("hex");
+  try {
+    
+      const record = await AuthRepository.FindOTPHash(email);
 
-  const record = await prisma.oTP.findFirst({
-    where: {
-      email,
-      expireAt: {
-        gt: new Date(),
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+    if (!record) {
+      return {
+        success: false,
+        message: "OTP expired or not found",
+      };
+    }
 
-  if (!record) {
+    if (record.otp !== hashedUserOtp) {
+      return {
+        success: false,
+        message: "Invalid OTP",
+      };
+    }
+
+    const verified = await AuthRepository.UpdatedUserVefifiedStatus(email);
+
+    if(!verified){
+      return{
+        success:false,
+        message:"couldn't verify user ",
+        data:null
+      }
+    }
+
+    const deletion = await AuthRepository.deleteStoredOtp(email);
+
+    if(!deletion){
+      return{
+        success:true,
+        message:"Otp deletion failed from db",
+        data:null
+      }
+    }
+
+
     return {
-      success: false,
-      message: "OTP expired or not found",
+      success: true,
+      message: "OTP verified",
     };
+
+  } catch (error) {
+    return{
+      success:false,
+      message:(error as Error).message || "Internal Server Error",
+      data:null
+    }
   }
-
-  if (record.otp !== hashedUserOtp) {
-    return {
-      success: false,
-      message: "Invalid OTP",
-    };
-  }
-
-  await prisma.user.update({
-    where: { email },
-    data: {
-      emailVerified: true,
-    },
-  });
-
-  await prisma.oTP.deleteMany({
-    where: { email },
-  });
-
-  return {
-    success: true,
-    message: "OTP verified",
-  };
+  
 };

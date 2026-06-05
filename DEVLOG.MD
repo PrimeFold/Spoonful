@@ -92,3 +92,19 @@
    * Prepared a helper function on the frontend.
    * Added function calling and proper data flow. 
 - Added ui adjustments to make site responsive for both large and small screens
+
+
+# Day-8 (05/06/2026)
+
+- Prepared `spot-card` or the spot details interface.
+   * Added querys & helper functions for the same.
+## Bugs : 
+- Had a bug where adding food spot just throws `added foot spot` success message but actually it didn't.
+- Some React rendering issue faced.
+- I added a ton of logs to see what was the actual bottleneck , turns out it was 2 things :
+   1. Maybe the data coming from the frontend was not type-safe so it was undefined.
+   2. I was sending the data from frontend but it wasn't an object `data` , and on the backend I was destructuring it . 
+   3. ( For react rendering issue ) - 
+## Fixes : 
+   1. Added a zod validation schema so that data coming from the frontend is type safe and in proper shape.
+   2. Removed that destructrig , resulting in success.

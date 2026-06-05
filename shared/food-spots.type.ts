@@ -1,7 +1,7 @@
-import {SpotRating,Tags} from '../backend/src/generated/prisma/client'
+import { SpotRating, Tags } from '../backend/src/generated/prisma/client'
 
 export interface FoodSpotDTO {
-  id: string;
+  id?:string
   name: string;
   location: {
     locality: string;
@@ -9,32 +9,47 @@ export interface FoodSpotDTO {
     city: string;
     state: string;
   };
-  spotRating: SpotRating;
-  tags: Tags[];
+  spotRating?: SpotRating;
+  tags?: Tags[];
+  imageUrl?:string
 }
+
+export interface GetFoodSpotsProps {
+  search?:string;
+  tags?:Tags[];
+  rating?:SpotRating;
+  page:number;
+  limit:number;
+}
+
+export interface GetUserSubmissionsProps extends GetFoodSpotsProps{
+  userId:string;
+}
+
 export const TagsDTO = {
-  TIFFIN: 'TIFFIN',
-  NON_VEG: 'NON_VEG',
-  VEG: 'VEG',
-  SNACKS: 'SNACKS',
-  LATE_NIGHT: 'LATE_NIGHT',
-  HOME_STYLE: 'HOME_STYLE',
-  BUDGET: 'BUDGET',
-  NORTH_INDIAN: 'NORTH_INDIAN',
-  SOUTH_INDIAN: 'SOUTH_INDIAN'
-} as const
+  TIFFIN: "TIFFIN",
+  NON_VEG: "NON_VEG",
+  VEG: "VEG",
+  SNACKS: "SNACKS",
+  LATE_NIGHT: "LATE_NIGHT",
+  HOME_STYLE: "HOME_STYLE",
+  BUDGET: "BUDGET",
+  NORTH_INDIAN: "NORTH_INDIAN",
+  SOUTH_INDIAN: "SOUTH_INDIAN",
+} as const;
 
-export type TagsDTO = (typeof Tags)[keyof typeof Tags]
-
+export type TagsDTO = typeof Tags[keyof typeof Tags];
 
 export const SpotRatingDTO = {
-  ONESTAR: 'ONESTAR',
-  TWOSTAR: 'TWOSTAR',
-  THREESTAR: 'THREESTAR',
-  FOURSTAR: 'FOURSTAR',
-  FIVESTAR: 'FIVESTAR'
-} as const
+  ONESTAR: "ONESTAR",
+  TWOSTAR: "TWOSTAR",
+  THREESTAR: "THREESTAR",
+  FOURSTAR: "FOURSTAR",
+  FIVESTAR: "FIVESTAR",
+} as const;
 
-export type SpotRatingDTO = (typeof SpotRating)[keyof typeof SpotRating]
+export type SpotRatingDTO =
+  typeof SpotRating[keyof typeof SpotRating];
+
 
 

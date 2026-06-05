@@ -33,6 +33,7 @@ export const FoodSpotRepository = {
   async createLocation(
     data: Prisma.LocationCreateInput
   ) {
+    console.log(data);
     return prisma.location.create({
       data,
     });
