@@ -11,10 +11,8 @@ import type { GetFoodSpotsProps, GetUserSubmissionsProps } from "../../../../sha
 
 export const AddFoodSpotService = async (  userId: string ,  data: FoodSpotDTO ): Promise<ApiResponse<FoodSpotDTO>> => {
   try {
-    console.log("service triggered")
-      
+   
     let location = await FoodSpotRepository.findLocation( data.location.locality , data.location.city , data.location.state , data.location.town);
-    console.log("location found!")
     if (!location) {
       location = await FoodSpotRepository.createLocation({
             locality: data.location.locality,
@@ -33,7 +31,7 @@ export const AddFoodSpotService = async (  userId: string ,  data: FoodSpotDTO )
         data: null,
       };
     }
-    console.log("duplicate found !")
+
 
     const foodSpot = await FoodSpotRepository.create(
       {
@@ -53,10 +51,6 @@ export const AddFoodSpotService = async (  userId: string ,  data: FoodSpotDTO )
           },
         },
       });
-
-
-  console.log("CREATED SPOT");
-  console.log(foodSpot);
 
     return {
       success: true,
@@ -201,9 +195,6 @@ export const GetFoodSpotById = async(spotId:string)=>{
         data:null
       }
     }
-    
-    console.log("VERIFY");
-    console.log(spot);
     return{
       success:true,
       message:"Spot found!",

@@ -60,7 +60,6 @@ export const AddFoodSpot = async(name: string, location:Location, rating?: SpotR
     const payload = {
         name, location,spotRating:rating, tags
     }
-    console.log("payload : ",payload)
     const { data } = await api.post('/app/food-spot',payload);
     return data;
 }
