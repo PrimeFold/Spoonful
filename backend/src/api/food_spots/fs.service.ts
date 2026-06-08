@@ -1,12 +1,12 @@
 import {  type FoodSpotDTO } from "../../../../shared/food-spots.type";
-import type { SpotRating, Tags } from "../../generated/prisma/client";
-import { buildFoodSpotFilters } from "../../lib/filter";
+import type { SpotRating, Tags, VerificationStatus } from "../../generated/prisma/client";
+import { buildFoodSpotFilters, buildUserSubmissionsFilters } from "../../lib/filter";
 import { redis } from "../../lib/redis";
 import { GetFoodSpotsSchema, GetUserSubmissionsSchema } from "../../lib/zod";
 import { foodSpotToDTO } from "../../mapper/fs.mapper";
 import type { ApiResponse, PaginatedResponse } from "../../types/api.types";
 import { generateAllSpotsKey, generateUserSpotsKey } from "../../utils/cacheKey";
-import { FoodSpotRepository } from "./fs.repository";
+import { FoodSpotRepository, UserRepository } from "./fs.repository";
 import type { GetFoodSpotsProps, GetUserSubmissionsProps } from "../../../../shared/food-spots.type";
 
 export const AddFoodSpotService = async (  userId: string ,  data: FoodSpotDTO ): Promise<ApiResponse<FoodSpotDTO>> => {
@@ -38,7 +38,6 @@ export const AddFoodSpotService = async (  userId: string ,  data: FoodSpotDTO )
         name: data.name.trim(),
         spotRating: data.spotRating!,
         tags: data.tags,
-
         user: {
           connect: {
             id: userId,
@@ -152,7 +151,7 @@ export const GetUserSubmissions = async({userId,search,tags,rating,page,limit}:G
 
     const skip = (page-1)*limit;
 
-    const where = buildFoodSpotFilters({search,tags,rating,userId});
+    const where = buildUserSubmissionsFilters({search,tags,rating,userId});
 
     const[spots,total] = await Promise.all([FoodSpotRepository.findMany(where,skip,limit),FoodSpotRepository.count(where)]);
     const items = spots.map(foodSpotToDTO);

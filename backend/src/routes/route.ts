@@ -1,14 +1,15 @@
 import * as FoodSpotController from '../api/food_spots/fs.controller'
 import  { Router } from 'express'
 import { limiter } from '../middleware/rateLimit';
-import { authMiddleware } from '../middleware/authMiddleware';
+import { authMiddleware, requireRole } from '../middleware/authMiddleware';
 import { GenerateOtpController, VerifyOtpController } from '../api/auth/auth.controller';
+import * as RolesController from '../api/roles/roles.controller'
 
 
 
 export const router = Router();
 
-//All GET routes
+
 router.get('/app/get-food-spots',authMiddleware,FoodSpotController.getAllFoodSpotsController);
 router.get('/app/get-food-spot/:id',authMiddleware,FoodSpotController.getFoodSpotById)
 router.get('/app/my-food-spots',authMiddleware,limiter,FoodSpotController.getFoodSpotsByUserIdController);
@@ -18,3 +19,29 @@ router.post('/app/food-spot',authMiddleware,limiter,FoodSpotController.AddFoodSp
 router.put('/app/add-food-rating',authMiddleware,limiter,FoodSpotController.assignRatingController);
 router.post('/otp/generate', GenerateOtpController);
 router.post('/otp/verify', VerifyOtpController)
+
+
+//ROLE BASED ROUTING..
+
+//For ADMINS
+
+//Get all pending food spots..
+router.get('/admin/food-spots/pending',requireRole("ADMIN"),RolesController.GetPendingFoodSpotsController);
+
+//Verify particular pending spot..
+router.patch('/admin/food-spots/:id/verify',requireRole("ADMIN"),RolesController.VerifyPendingSpotController);
+
+
+//For OWNER..
+
+//Get all admins
+router.get('/owner/admins',requireRole("OWNER"),RolesController.GetAllAdminsController);
+
+//Promotion to admin..
+router.post('/owner/admins',requireRole("OWNER"),RolesController.PromoteToAdminController);
+
+//Getting all admin queries.. probably in v2
+//router.get('/owner/admins/query',requireRole("OWNER"));
+
+//Demotion to a student..
+router.put('/owner/admins/:id',requireRole("OWNER"));

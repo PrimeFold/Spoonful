@@ -108,3 +108,11 @@
 ## Fixes : 
    1. Added a zod validation schema so that data coming from the frontend is type safe and in proper shape.
    2. Removed that destructrig , resulting in success.
+
+
+# Day-9 (06/06/2026)
+
+- Thinking of polishing more stuff as of now.
+   * Would have a 'city-state' validity check cause as of now anybody could enter any imagninary or wrong city for any state. 
+   * And I have to add an admin dashboard as well so that one of us could review what locations actually exist and what doesn't.
+

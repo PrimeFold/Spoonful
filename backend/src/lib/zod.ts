@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SpotRating, Tags } from "../generated/prisma/client";
+import { SpotRating, Tags, VerificationStatus } from "../generated/prisma/client";
 
 export const GetFoodSpotsSchema = z.object({
   search: z.preprocess((value) => {
@@ -40,4 +40,9 @@ export const AddFoodSpotsSchema = z.object({
   }),
   spotRating:z.enum(SpotRating).optional(),
   tags:z.array(z.enum(Tags)).optional()
+})
+
+export const VerifyPendingSpotSchema = z.object({
+  spotId:z.string(),
+  status:z.enum(VerificationStatus)
 })

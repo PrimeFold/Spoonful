@@ -8,6 +8,18 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole{
+  STUDENT
+  ADMIN
+  OWNER
+}
+
+enum VerificationStatus{
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
 enum SpotRating{
   ONESTAR
   TWOSTAR
@@ -40,6 +52,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
   foodSpots     FoodSpots[]
+  role          UserRole @default(STUDENT)
+  adminActions AdminAction[]
   @@unique([email])
   @@map("user")
 }
@@ -54,6 +68,12 @@ model FoodSpots {
   spotRating SpotRating
   tags       Tags[]
 
+  status       VerificationStatus @default(PENDING)
+  verifiedById String?
+  verifiedAt   DateTime?
+  rejectionReason String?
+
+  @@index([status])
   @@unique([name])
   @@index([name])
 }
@@ -123,4 +143,17 @@ model OTP{
   createdAt DateTime @default(now())
   expireAt DateTime  
   @@index([email])
+}
+
+
+model AdminAction {
+  id        String @id @default(cuid())
+  adminId   String
+  admin     User @relation(fields: [adminId], references: [id])
+
+  action    String
+  targetId  String?
+  metadata  Json?
+
+  createdAt DateTime @default(now())
 }

@@ -1,4 +1,4 @@
-import { SpotRating, Tags } from '../backend/src/generated/prisma/client'
+import { SpotRating, Tags, VerificationStatus } from '../backend/src/generated/prisma/client'
 
 export interface FoodSpotDTO {
   id?:string
@@ -12,6 +12,7 @@ export interface FoodSpotDTO {
   spotRating?: SpotRating;
   tags?: Tags[];
   imageUrl?:string
+  status?:VerificationStatus
 }
 
 export interface GetFoodSpotsProps {

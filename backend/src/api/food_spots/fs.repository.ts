@@ -2,6 +2,7 @@ import { prisma } from "../../lib/auth/auth";
 import {
   Prisma,
   SpotRating,
+  VerificationStatus,
 } from "../../generated/prisma/client";
 
 export const FOOD_SPOT_SELECT = {
@@ -11,6 +12,7 @@ export const FOOD_SPOT_SELECT = {
   location: true,
   tags: true,
   spotRating: true,
+  status:true,
 } as const;
 
 export const FoodSpotRepository = {
@@ -79,6 +81,8 @@ export const FoodSpotRepository = {
     });
   },
 
+  
+
   async findMany(
     where: Prisma.FoodSpotsWhereInput,
     skip: number,
@@ -99,4 +103,28 @@ export const FoodSpotRepository = {
       where,
     });
   },
+  //Admin functions
+  async findPendingSpots(){
+    return prisma.foodSpots.findMany({
+      where:{
+        status:"PENDING"
+      },
+      select:FOOD_SPOT_SELECT
+    })
+  },
+
+  async verifyPendingSpot(id:string,status:VerificationStatus){
+    return prisma.foodSpots.update({
+      where:{
+        id
+      },
+      data:{
+        status
+      }
+    })
+  },
+
+
+  
+
 }

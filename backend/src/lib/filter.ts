@@ -8,7 +8,36 @@ interface Filters {
   userId?: string;
 }
 
+
 export const buildFoodSpotFilters = ({
+  search,
+  tags,
+  rating,
+  userId,
+}: Filters): Prisma.FoodSpotsWhereInput => ({
+
+  ...(userId && { userId }),
+
+  ...(search && {
+    name: {
+      contains: search,
+      mode: "insensitive",
+    },
+  }),
+
+  ...(tags?.length && {
+    tags: {
+      hasEvery: tags,
+    },
+  }),
+
+  ...(rating && {
+    spotRating: rating,
+  }),
+});
+
+
+export const buildUserSubmissionsFilters = ({
   search,
   tags,
   rating,
@@ -33,3 +62,4 @@ export const buildFoodSpotFilters = ({
     spotRating: rating,
   }),
 });
+

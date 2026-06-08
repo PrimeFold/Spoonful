@@ -1,13 +1,12 @@
 import * as FoodSpotService from "./fs.service";
 import type { Handler } from "../../types";
-import { AddFoodSpotsSchema, GetFoodSpotsSchema } from "../../lib/zod";
+import { AddFoodSpotsSchema, GetFoodSpotsSchema, VerifyPendingSpotSchema } from "../../lib/zod";
+import { verificationSchema } from "better-auth";
 
 export const AddFoodSpotController: Handler = async (
   req,
   res
 ) => {
-  console.log("AddFoodSpotController triggered")
-  console.log("Request body:", JSON.stringify(req.body, null, 2))
   const  data  = req.body;
   const result = AddFoodSpotsSchema.safeParse(data);
   if(!result.success){
@@ -173,3 +172,5 @@ export const getFoodSpotsByUserIdController: Handler =
       });
     }
   };
+
+
