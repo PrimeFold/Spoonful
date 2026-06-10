@@ -114,5 +114,11 @@
 
 - Thinking of polishing more stuff as of now.
    * Would have a 'city-state' validity check cause as of now anybody could enter any imagninary or wrong city for any state. 
-   * And I have to add an admin dashboard as well so that one of us could review what locations actually exist and what doesn't.
+- Adding RBAC : 
+   * Added admin , owner functions.
+
+
+# Day-10 (10/06/2026)
+- Today I'll be adding UI/UX for the admins and the OWNER.
+
 
