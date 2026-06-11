@@ -2,11 +2,11 @@ import { ArrowLeft, Share2, MapPin, Star, Clock, Flag } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { RateReviewModal } from "./rate-review-modal";
-import { BottomNav } from "./bottom-nav";
+import { BottomNav } from "../pages/app/bottom-nav";
 import { useQuery } from "@tanstack/react-query";
-import { getFoodSpotById } from "../../../lib/actions";
+import { getFoodSpotById } from "../../lib/actions";
 import toast from "react-hot-toast";
-import LoaderComponent from "../../../components/loader";
+import LoaderComponent from "../../components/loader";
 
 export default function SpotDetailPage() {
   const { id } = useParams<{ id: string }>();

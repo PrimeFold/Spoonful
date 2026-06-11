@@ -13,6 +13,7 @@ export const FOOD_SPOT_SELECT = {
   tags: true,
   spotRating: true,
   status:true,
+  createdAt:true
 } as const;
 
 export const FoodSpotRepository = {

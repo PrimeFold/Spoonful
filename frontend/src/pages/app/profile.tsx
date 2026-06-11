@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  LogOut,
   Edit2,
   MapPin,
   GraduationCap,
@@ -9,18 +8,20 @@ import {
 } from "lucide-react";
 
 import { cn } from "../../../lib/utils";
-import { BottomNav } from "./bottom-nav";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSubmissions } from "../../../lib/actions";
 import { authClient } from "../../../lib/auth";
 import toast from "react-hot-toast";
 import type { TagsDTO, SpotRatingDTO, FoodSpotDTO } from "../../../../shared/food-spots.type";
 import LoaderComponent from "../../../components/loader";
+import { BottomNav } from "../../components/bottom-nav";
+import ErrorPage from "../error/error";
+import Navbar from "../../components/Navbar";
 
 //We'll add my reviews later..
 
-
 const TAG_LABELS: Record<TagsDTO, string> = {
+  BREAKFAST:"🍳Breakfast",
   BUDGET: "💰 Budget",
   NON_VEG: "🍖 Non-Veg",
   HOME_STYLE: "🏠 Home Style",
@@ -89,16 +90,7 @@ export default function ProfilePage() {
   const pagination = data?.data?.pagination;
   const totalSubmissions = pagination?.total ?? spots.length;
   const activeFilterCount = selectedTags.length + (selectedRating ? 1 : 0);
-
-  const handleLogout = async () => {
-    try {
-      await authClient.signOut();
-    } catch (error) {
-      console.log((error as Error).message);
-    }
-  };
-
-  const [activeTab, setActiveTab] = useState<   "submissions" | "reviews" >("submissions");
+  const [activeTab, setActiveTab] = useState<"submissions" | "reviews" >("submissions");
 
 
   if (isLoading || sessionLoading) {
@@ -112,38 +104,13 @@ export default function ProfilePage() {
   
   if (isError) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="text-center space-y-3">
-          <div className="text-4xl">⚠️</div>
-          <p className="text-sm font-semibold text-red-500">
-            {(error as Error)?.message || "Something went wrong"}
-          </p>
-        </div>
-      </div>
+      <ErrorPage error={error}/>
     );
   }
 
   return (
     <div className="min-h-screen bg-background pb-36 md:pb-28">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-border">
-        <div className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="font-bold text-lg text-foreground">
-            My Profile
-          </h1>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-destructive transition-colors cursor-pointer hover:"
-            aria-label="Log out"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:block">Log out</span>
-          </button>
-        </div>
-      </header>
-
+      <Navbar variant="PROFILE"/>
       <main className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto px-4">
         {/* Profile card */}
         <div className="mt-5 bg-card rounded-3xl border border-border p-5">
@@ -338,7 +305,7 @@ export default function ProfilePage() {
                     key={spot.id}
                     className="bg-card rounded-2xl border border-border p-4 flex flex-col gap-3 sm:flex-row sm:items-center"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl flex-shrink-0">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-xl shrink-0">
                       🍽️
                     </div>
 
@@ -347,7 +314,16 @@ export default function ProfilePage() {
                         {spot.name}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
-                        {spot.location}
+                        {spot.location?.locality}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {spot.location?.town}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {spot.location?.city}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {spot.location?.state}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         {spot.tags?.map((tag) => (

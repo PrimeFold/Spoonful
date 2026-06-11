@@ -30,7 +30,7 @@ router.get('/admin/food-spots/pending',requireRole("ADMIN"),RolesController.GetP
 
 //Verify particular pending spot..
 router.patch('/admin/food-spots/:id/verify',requireRole("ADMIN"),RolesController.VerifyPendingSpotController);
-
+router.get('/admin/food-spots/:id',requireRole("ADMIN"),)
 
 //For OWNER..
 

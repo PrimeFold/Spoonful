@@ -6,7 +6,7 @@ import { GetFoodSpotsSchema, GetUserSubmissionsSchema } from "../../lib/zod";
 import { foodSpotToDTO } from "../../mapper/fs.mapper";
 import type { ApiResponse, PaginatedResponse } from "../../types/api.types";
 import { generateAllSpotsKey, generateUserSpotsKey } from "../../utils/cacheKey";
-import { FoodSpotRepository, UserRepository } from "./fs.repository";
+import { FoodSpotRepository } from "./fs.repository";
 import type { GetFoodSpotsProps, GetUserSubmissionsProps } from "../../../../shared/food-spots.type";
 
 export const AddFoodSpotService = async (  userId: string ,  data: FoodSpotDTO ): Promise<ApiResponse<FoodSpotDTO>> => {

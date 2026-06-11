@@ -1,6 +1,5 @@
-
-//ADMIN FUNCTIONS
 import * as RoleService from '../roles/roles.service'
+import { GetFoodSpotById } from '../food_spots/fs.service';
 import { VerifyPendingSpotSchema } from "../../lib/zod";
 import type { Handler } from "../../types";
 
@@ -19,9 +18,25 @@ export const GetPendingFoodSpotsController : Handler= async(req,res)=>{
   }
 }
 
+export const GetPendingFoodSpotController : Handler = async(req,res)=>{
+  const {id} = req.body;
+  try {
+    const response = await GetFoodSpotById(id);
+    if(!response.success){
+      return res.status(400).json(response);
+    }
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      success:false,
+      message:(error as Error).message ?? "Internal Server Error"
+    })
+    
+  }
+}
+
 export const VerifyPendingSpotController:Handler = async(req,res)=>{
   const result = VerifyPendingSpotSchema.safeParse(req.body);
-
   if(!result.success){
     return res.status(400).json({
       message:"Invalid Input"

@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./protected/ProtectedRoute"
 import Verification from "./pages/auth/verification"
 import ProfilePage from "./pages/app/profile"
 import AddSpotPage from "./pages/app/add-spot"
+import VerificationPage from "./pages/app/roles/admin/verificationPage"
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
           <Route path="/app/home" element={<HomePage/>}/>
           <Route path="/app/profile" element={<ProfilePage/>}/>
           <Route path="/app/add-spot" element={<AddSpotPage/>}/>
-          <Route path="/app/notifications" element={<></>}/> 
+          <Route path="/admin/food-spots/:spotId" element={<VerificationPage/>}/>
         </Route> 
       </Routes>
       

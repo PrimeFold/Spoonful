@@ -13,6 +13,8 @@ export interface FoodSpotDTO {
   tags?: Tags[];
   imageUrl?:string
   status?:VerificationStatus
+  userid?:string;
+  createAt?:string;
 }
 
 export interface GetFoodSpotsProps {
@@ -53,4 +55,11 @@ export type SpotRatingDTO =
   typeof SpotRating[keyof typeof SpotRating];
 
 
+export const VerificationStatusDTO = {
+   PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type VerificationStatusDTO = (typeof VerificationStatus)[keyof typeof VerificationStatus]
 

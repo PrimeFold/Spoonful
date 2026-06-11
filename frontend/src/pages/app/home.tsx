@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, Plus, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
-import { BottomNav } from "./bottom-nav";
-import { SpotCard } from "./spot-card";
 import { authClient } from "../../../lib/auth";
 import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getAllFoodSpots } from "../../../lib/actions";
 import LoaderComponent from "../../../components/loader";
 import type { FoodSpotDTO,  SpotRatingDTO,  TagsDTO } from "../../../../shared/food-spots.type";
+import { BottomNav } from "../../components/bottom-nav";
+import { SpotCard } from "../../components/spot-card";
+import Navbar from "../../components/Navbar";
+import ErrorPage from "../error/error";
 
 const TAG_LABELS: Record<TagsDTO, string> = {
   BREAKFAST:"Breakfast",
@@ -89,46 +91,16 @@ export default function HomePage() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="text-center space-y-3">
-          <div className="text-4xl">⚠️</div>
-          <p className="text-sm font-semibold text-red-500">
-            {(error as Error)?.message || "Something went wrong"}
-          </p>
-        </div>
-      </div>
+      <ErrorPage error={error}/>
     );
   }
 
   const activeFilterCount = selectedTags.length + (selectedRating ? 1 : 0);
-
+  const username = user?.name;
+  
   return (
     <div className="min-h-screen bg-background pb-36 md:pb-28">
-
-      {/* ── Header ── */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground text-xs font-black">S</span>
-            </div>
-            <span className="font-black text-foreground tracking-tight text-lg">
-              Spoonful
-            </span>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            <Link to="/app/profile">
-              <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center font-bold text-primary-foreground text-sm ring-2 ring-primary/30 hover:ring-primary/60 transition-all">
-                {user?.name?.charAt(0)?.toUpperCase() || "U"}
-              </div>
-            </Link>
-          </div>
-        </div>
-      </header>
-
+      <Navbar username={username || 'U'} variant={"HOME"}/>
       <main className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto px-4">
 
         {/* ── Hero greeting ── */}

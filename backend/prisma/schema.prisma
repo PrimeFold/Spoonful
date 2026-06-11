@@ -69,10 +69,9 @@ model FoodSpots {
   tags       Tags[]
 
   status       VerificationStatus @default(PENDING)
-  verifiedById String?
-  verifiedAt   DateTime?
+  verifiedAt   DateTime?  
   rejectionReason String?
-
+  createdAt    DateTime @default(now())
   @@index([status])
   @@unique([name])
   @@index([name])

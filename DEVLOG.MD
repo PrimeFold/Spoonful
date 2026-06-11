@@ -119,6 +119,11 @@
 
 
 # Day-10 (10/06/2026)
-- Today I'll be adding UI/UX for the admins and the OWNER.
+- Today I'll be adding UI/UX for the admins.
+- Not much to do honestly.
 
 
+# Day-11 (11/06/2026)
+- Today I prepared the verification page , queries and mutations.
+- Wrote helper functions as well as modified some types to get user id.
+- Tomorrow I'd be preparing the OWNER dashboard and respective functions.

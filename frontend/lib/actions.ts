@@ -1,5 +1,5 @@
 
-import type { SpotRatingDTO, TagsDTO } from "../../shared/food-spots.type";
+import type { SpotRatingDTO, TagsDTO, VerificationStatusDTO } from "../../shared/food-spots.type";
 import { api } from "./axios";
 
 interface Location{
@@ -65,8 +65,19 @@ export const AddFoodSpot = async(name: string, location:Location, rating?: SpotR
 }
 
 
+export const GetPendingFoodSpots = async()=>{
+    const {data} = await api.get('/admin/food-spots/pending');
+    return data;
+}
 
+export const VerifyPendingFoodSpots = async(id:string,status:VerificationStatusDTO)=>{
+    const {data} = await api.post(`/admin/food-spots/${id}/verify`,status);
+    return data;
+}
 
-
+export const GetPendingFoodSpotById = async(id:string)=>{
+    const {data }= await api.post(`/admin/food-spots/${id}`,id);
+    return data;
+}
 
 

@@ -2,7 +2,6 @@ import { ArrowLeft, Check, Clock, X, Upload } from "lucide-react"
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { cn } from "../../../lib/utils"
-import { BottomNav } from "./bottom-nav"
 import { useMutation } from "@tanstack/react-query"
 import { AddFoodSpot } from "../../../lib/actions"
 import type { TagsDTO, SpotRatingDTO } from "../../../../shared/food-spots.type"
@@ -10,6 +9,8 @@ import toast from "react-hot-toast"
 import LoaderComponent from "../../../components/loader"
 
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
+import { BottomNav } from "../../components/bottom-nav"
+import ErrorPage from "../error/error"
 
 const SPOT_TAGS: { label: string; value: TagsDTO }[] = [
   { label: "Veg", value: "VEG" },
@@ -126,6 +127,9 @@ export default function AddSpotPage() {
     }
   }
   
+  if(mutation.isError){
+    return <ErrorPage error={mutation.error}/>
+  }
 
 
   if (submitted) {
