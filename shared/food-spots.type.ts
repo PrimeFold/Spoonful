@@ -9,18 +9,18 @@ export interface FoodSpotDTO {
     city: string;
     state: string;
   };
-  spotRating?: SpotRating;
+  spotRating?: SpotRatingDTO;
   tags?: Tags[];
   imageUrl?:string
-  status?:VerificationStatus
+  status?:VerificationStatusDTO
   userid?:string;
   createAt?:string;
 }
 
 export interface GetFoodSpotsProps {
   search?:string;
-  tags?:Tags[];
-  rating?:SpotRating;
+  tags?:TagsDTO[];
+  rating?:SpotRatingDTO;
   page:number;
   limit:number;
 }

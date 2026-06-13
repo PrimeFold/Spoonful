@@ -1,5 +1,7 @@
-import type { UserRole } from "../backend/src/generated/prisma/client";
+
 import type { PaginatedResponse } from "../backend/src/types/api.types";
+
+export type UserRole = 'STUDENT' | 'ADMIN' | 'OWNER';
 
 export interface ManagedUserDTO {
   id: string;
