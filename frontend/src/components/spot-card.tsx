@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Star, MapPin } from "lucide-react";
-import { cn } from "../../../lib/utils";
-import type { FoodSpotDTO } from "../../../../shared/food-spots.type";
+import type { FoodSpotDTO } from "../../../shared/food-spots.type";
+import { cn } from "../../lib/utils";
 
 
 interface SpotCardProps {
@@ -43,7 +43,7 @@ export function SpotCard({ spot, variant = "vertical", className }: SpotCardProp
               <span>{spot.spotRating}</span>
             </div>
             <div className="flex flex-wrap gap-1">
-              {spot.tags.slice(0, 2).map((tag) => (
+              {spot.tags?.slice(0, 2).map((tag) => (
                 <span key={tag} className={tagClasses}>
                   {tag}
                 </span>
@@ -58,7 +58,7 @@ export function SpotCard({ spot, variant = "vertical", className }: SpotCardProp
   return (
     <Link to={`/spot/${spot.id}`} className={cn("group block transition-transform duration-300 hover:-translate-y-1", className)}>
       <div className="overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-sm transition-shadow duration-300 group-hover:shadow-lg">
-        <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+        <div className="relative aspect-4/3 overflow-hidden bg-slate-100">
           {spot.imageUrl ? (
             <img src={spot.imageUrl} alt={spot.name} className="h-full w-full object-cover" />
           ) : (
@@ -81,7 +81,7 @@ export function SpotCard({ spot, variant = "vertical", className }: SpotCardProp
             <h3 className="text-base font-bold text-foreground leading-tight">{spot.name}</h3>
           </div>
           <div className="flex flex-wrap gap-2">
-            {spot.tags.slice(0, 3).map((tag) => (
+            {spot.tags?.slice(0, 3).map((tag) => (
               <span key={tag} className={tagClasses}>
                 {tag}
               </span>

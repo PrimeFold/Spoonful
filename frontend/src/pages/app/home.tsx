@@ -64,7 +64,7 @@ export default function HomePage() {
 
   const currentHour = new Date().getHours();
 
-  const { meal, timeOfDay, greeting } = useMemo(() => {
+  const { meal, greeting } = useMemo(() => {
     if (currentHour >= 12 && currentHour < 16)
       return { meal: "Lunch", timeOfDay: "Afternoon", greeting: "Good afternoon" };
     if (currentHour >= 16)

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { X, Star, Check } from "lucide-react"
-import { cn } from "../../../lib/utils"
+import { cn } from "../../lib/utils"
+
 
 const GOOD_TAGS = ["Great value", "Tasty food", "Friendly", "Clean", "Fast service", "Big portions", "Authentic"]
 

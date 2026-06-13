@@ -1,42 +1,28 @@
 import toast from "react-hot-toast";
 import { authClient } from "../../../../../lib/auth";
 import Navbar from "../../../../components/Navbar";
-import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { GetPendingFoodSpots, VerifyPendingFoodSpots } from "../../../../../lib/actions";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { GetPendingFoodSpots } from "../../../../../lib/actions";
 import ErrorPage from "../../../error/error";
-import type { FoodSpotDTO, TagsDTO, VerificationStatusDTO } from "../../../../../../shared/food-spots.type";
+import type { TagsDTO } from "../../../../../../shared/food-spots.type";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { Button } from "../../../../components/ui/button";
 import { Badge } from "../../../../components/ui/badge";
 import { useParams } from "react-router-dom";
-import { queryClient } from "../../../../../lib/queryClient";
 
 const AdminDashboard = () => {
     const { id } = useParams();
     if(!id){
         return toast.error("Id not found !")
     }
-    const [status,setStatus] = useState<VerificationStatusDTO>();
     const {
       data: session,
       error: sessionError,
       isPending: sessionLoading,
     } = authClient.useSession();
 
-    if(!status){
-      return toast.error("Enter a status first !")
-    }
-
-    const mutation = useMutation({
-      mutationFn:async()=>VerifyPendingFoodSpots(id,status),
-      onSuccess: () => {
-        queryClient.setQueryData<FoodSpotDTO[]>(
-          ["admin:pending-requests"],
-          (old) => old?.filter((s) => s.id !== id) ?? []
-        );
-      }
-    })
+ 
 
     useEffect(() => {
       if (sessionError) toast.error(sessionError.message);

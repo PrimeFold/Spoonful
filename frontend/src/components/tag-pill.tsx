@@ -1,6 +1,4 @@
-
-
-import { cn } from "../../../lib/utils"
+import { cn } from "../../lib/utils"
 
 interface TagPillProps {
   label: string

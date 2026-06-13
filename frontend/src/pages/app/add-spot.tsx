@@ -7,7 +7,6 @@ import { AddFoodSpot } from "../../../lib/actions"
 import type { TagsDTO, SpotRatingDTO } from "../../../../shared/food-spots.type"
 import toast from "react-hot-toast"
 import LoaderComponent from "../../../components/loader"
-
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { BottomNav } from "../../components/bottom-nav"
 import ErrorPage from "../error/error"
@@ -130,6 +129,8 @@ export default function AddSpotPage() {
   if(mutation.isError){
     return <ErrorPage error={mutation.error}/>
   }
+
+  if(mutation.isPending) return <LoaderComponent/>
 
 
   if (submitted) {
