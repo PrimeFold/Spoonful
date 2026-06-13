@@ -1,4 +1,9 @@
-import { SpotRating, Tags, VerificationStatus } from '../backend/src/generated/prisma/enums'
+
+
+export type VerificationStatus = "PENDING" | "VERIFIED" | "REJECTED";
+export type SpotRating  = "ONESTAR" | "TWOSTAR" | "THREESTAR" | "FOURSTAR" | "FIVESTAR";
+export type Tags = "BREAKFAST" | "TIFFIN" | "NON_VEG" | "VEG" | "SNACKS" | "LATE_NIGHT" | "HOME_STYLE" | "BUDGET" | "NORTH_INDIAN" | "SOUTH_INDIAN";
+
 
 export interface FoodSpotDTO {
   id?:string
@@ -9,18 +14,18 @@ export interface FoodSpotDTO {
     city: string;
     state: string;
   };
-  spotRating?: SpotRatingDTO;
+  spotRating?: SpotRating;
   tags?: Tags[];
   imageUrl?:string
-  status?:VerificationStatusDTO
+  status?:VerificationStatus
   userid?:string;
   createAt?:string;
 }
 
 export interface GetFoodSpotsProps {
   search?:string;
-  tags?:TagsDTO[];
-  rating?:SpotRatingDTO;
+  tags?:Tags[];
+  rating?:SpotRating;
   page:number;
   limit:number;
 }
@@ -39,9 +44,8 @@ export const TagsDTO = {
   BUDGET: "BUDGET",
   NORTH_INDIAN: "NORTH_INDIAN",
   SOUTH_INDIAN: "SOUTH_INDIAN",
-} as const;
+} 
 
-export type TagsDTO = typeof Tags[keyof typeof Tags];
 
 export const SpotRatingDTO = {
   ONESTAR: "ONESTAR",
@@ -49,17 +53,14 @@ export const SpotRatingDTO = {
   THREESTAR: "THREESTAR",
   FOURSTAR: "FOURSTAR",
   FIVESTAR: "FIVESTAR",
-} as const;
-
-export type SpotRatingDTO =
-  typeof SpotRating[keyof typeof SpotRating];
+} 
 
 
 export const VerificationStatusDTO = {
-   PENDING: 'PENDING',
+  PENDING: 'PENDING',
   VERIFIED: 'VERIFIED',
   REJECTED: 'REJECTED'
-} as const
+}
 
-export type VerificationStatusDTO = (typeof VerificationStatus)[keyof typeof VerificationStatus]
+
 
