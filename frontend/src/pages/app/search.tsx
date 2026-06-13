@@ -7,7 +7,7 @@ import { BottomNav } from "../../components/bottom-nav";
 import ErrorPage from "../error/error";
 import { SpotCard } from "../../components/spot-card";
 import { getAllFoodSpots } from "../../../lib/actions";
-import type { TagsDTO } from "../../../../shared/food-spots.type";
+import type { FoodSpotDTO, TagsDTO } from "../../../../shared/food-spots.type";
 import { cn } from "../../../lib/utils";
 
 const TAG_FILTERS: { label: string; value: TagsDTO | "All" }[] = [
@@ -194,7 +194,7 @@ export default function SearchPage() {
           </div>
         ) : (
           <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {spots.map((spot, index) => (
+            {spots.map((spot:FoodSpotDTO, index:number) => (
               <div
                 key={spot.id}
                 className="animate-in fade-in slide-in-from-bottom-2 duration-300"

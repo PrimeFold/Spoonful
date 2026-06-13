@@ -106,11 +106,11 @@ export default function OwnerDashboard() {
       const previousAdmins = queryClient.getQueryData<typeof adminsQuery.data>(adminsQueryKey);
       const previousStudents = queryClient.getQueryData<typeof studentsQuery.data>(studentsQueryKey);
 
-      queryClient.setQueryData<typeof adminsQuery.data>(adminsQueryKey, (current) => {
+      queryClient.setQueryData<typeof adminsQuery.data>(adminsQueryKey, (current:any) => {
         if (!current?.data) return current;
         return {
           ...current,
-          data: current.data.some((entry) => entry.id === target.id)
+          data: current.data.some((entry:any) => entry.id === target.id)
             ? current.data
             : [...current.data, { ...target, role: "ADMIN" }],
         };
@@ -158,11 +158,11 @@ export default function OwnerDashboard() {
       const previousAdmins = queryClient.getQueryData<typeof adminsQuery.data>(adminsQueryKey);
       const previousStudents = queryClient.getQueryData<typeof studentsQuery.data>(studentsQueryKey);
 
-      queryClient.setQueryData<typeof adminsQuery.data>(adminsQueryKey, (current) => {
+      queryClient.setQueryData<typeof adminsQuery.data>(adminsQueryKey, (current:any) => {
         if (!current?.data) return current;
         return {
           ...current,
-          data: current.data.filter((entry) => entry.id !== target.id),
+          data: current.data.filter((entry:any) => entry.id !== target.id),
         };
       });
 
@@ -274,7 +274,7 @@ export default function OwnerDashboard() {
                     <p className="text-sm font-semibold text-muted-foreground">No submissions in the queue.</p>
                   </div>
                 ) : (
-                  pendingSpots.map((spot) => (
+                  pendingSpots.map((spot:any) => (
                     <article key={spot.id} className="rounded-3xl border border-border bg-card p-4 shadow-sm">
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div className="min-w-0">
@@ -290,7 +290,7 @@ export default function OwnerDashboard() {
                           </p>
                           <p className="mt-1 text-xs text-muted-foreground">Submitted on {formatDate(spot.createAt)}</p>
                           <div className="mt-3 flex flex-wrap gap-2">
-                            {spot.tags?.map((tag) => (
+                            {spot.tags?.map((tag:any) => (
                               <Badge key={tag} variant="outline">
                                 {tag}
                               </Badge>
@@ -358,7 +358,7 @@ export default function OwnerDashboard() {
                     <p className="text-sm font-semibold text-muted-foreground">No admins found.</p>
                   </div>
                 ) : (
-                  admins.map((admin) => (
+                  admins.map((admin:any) => (
                     <div
                       key={admin.id}
                       className="flex flex-col gap-4 rounded-3xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between"
