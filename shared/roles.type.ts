@@ -1,6 +1,20 @@
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T | null;
+}
 
-import type { PaginatedResponse } from "../backend/src/types/api.types";
+export interface PaginatedResponse<T> {
+  items: T[];
+  pagination: PaginationMeta;
+}
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  hasMore: boolean;
+}
 export type UserRole = 'STUDENT' | 'ADMIN' | 'OWNER';
 
 export interface ManagedUserDTO {
