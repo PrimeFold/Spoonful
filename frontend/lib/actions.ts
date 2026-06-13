@@ -1,7 +1,6 @@
 
 import type { SpotRatingDTO, TagsDTO, VerificationStatusDTO } from "../../shared/food-spots.type";
-import type { GetManagedUsersProps, ManagedUsersResponse } from "../../shared/roles.type";
-import type { ApiResponse } from "../../shared/api.types";
+import type { ApiResponse, GetManagedUsersProps, ManagedUsersResponse } from "../../shared/roles.type";
 import { api } from "./axios";
 
 interface Location{

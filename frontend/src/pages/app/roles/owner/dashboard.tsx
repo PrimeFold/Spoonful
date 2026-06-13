@@ -116,13 +116,13 @@ export default function OwnerDashboard() {
         };
       });
 
-      queryClient.setQueryData<typeof studentsQuery.data>(studentsQueryKey, (current) => {
+      queryClient.setQueryData<typeof studentsQuery.data>(studentsQueryKey, (current:any) => {
         if (!current?.data) return current;
         return {
           ...current,
           data: {
             ...current.data,
-            items: current.data.items.filter((entry) => entry.id !== target.id),
+            items: current.data.items.filter((entry:any) => entry.id !== target.id),
           },
         };
       });
@@ -166,13 +166,13 @@ export default function OwnerDashboard() {
         };
       });
 
-      queryClient.setQueryData<typeof studentsQuery.data>(studentsQueryKey, (current) => {
+      queryClient.setQueryData<typeof studentsQuery.data>(studentsQueryKey, (current:any) => {
         if (!current?.data) return current;
         return {
           ...current,
           data: {
             ...current.data,
-            items: current.data.items.some((entry) => entry.id === target.id)
+            items: current.data.items.some((entry:any) => entry.id === target.id)
               ? current.data.items
               : [{ ...target, role: "STUDENT" }, ...current.data.items],
           },
@@ -421,7 +421,7 @@ export default function OwnerDashboard() {
                       <p className="text-sm font-semibold text-muted-foreground">No students match this view.</p>
                     </div>
                   ) : (
-                    students.map((student) => (
+                    students.map((student:any) => (
                       <div
                         key={student.id}
                         className="rounded-3xl border border-border bg-card p-4 shadow-sm"
