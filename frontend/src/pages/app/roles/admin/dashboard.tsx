@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { GetPendingFoodSpots, VerifyPendingFoodSpots } from "../../../../../lib/actions";
 import ErrorPage from "../../../error/error";
-import LoaderComponent from "../../../../../components/loader";
 import type { FoodSpotDTO, TagsDTO, VerificationStatusDTO } from "../../../../../../shared/food-spots.type";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { Button } from "../../../../components/ui/button";
@@ -26,7 +25,7 @@ const AdminDashboard = () => {
     } = authClient.useSession();
 
     if(!status){
-      return toast.error("Select a status first!")
+      return toast.error("Enter a status first !")
     }
 
     const mutation = useMutation({
@@ -59,12 +58,58 @@ const AdminDashboard = () => {
       return <ErrorPage error={error}/>;
     }
 
-    if (isLoading || sessionLoading) {
-      return <LoaderComponent />;
+    const showSkeleton = isLoading || sessionLoading;
+
+    const pendingSpots = data?.data?.items ?? [];
+
+
+    if (showSkeleton) {
+      return (
+        <div className="min-h-screen bg-background pb-36 md:pb-28">
+          <Navbar
+            username={user?.name || "A"}
+            variant="ADMIN"
+          />
+
+          <main className="mx-auto max-w-7xl px-4 py-8">
+            <div className="mb-8 space-y-3">
+              <div className="h-9 w-64 rounded-full bg-secondary animate-pulse" />
+              <div className="h-5 w-80 rounded-full bg-secondary animate-pulse" />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3 mb-8">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Card key={index}>
+                  <CardHeader className="pb-2">
+                    <div className="h-4 w-24 rounded-full bg-secondary animate-pulse" />
+                    <div className="h-8 w-20 rounded-full bg-secondary animate-pulse" />
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+
+            <Card>
+              <CardHeader>
+                <div className="h-6 w-44 rounded-full bg-secondary animate-pulse" />
+                <div className="h-4 w-72 rounded-full bg-secondary animate-pulse" />
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="rounded-3xl border border-border p-4 space-y-3">
+                    <div className="h-5 w-40 rounded-full bg-secondary animate-pulse" />
+                    <div className="h-4 w-full rounded-full bg-secondary animate-pulse" />
+                    <div className="flex gap-2">
+                      <div className="h-6 w-16 rounded-full bg-secondary animate-pulse" />
+                      <div className="h-6 w-20 rounded-full bg-secondary animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </main>
+        </div>
+      );
     }
-
-    const pendingSpots = data?.data ?? [];
-
 
     return (
       <div className="min-h-screen bg-background pb-36 md:pb-28">

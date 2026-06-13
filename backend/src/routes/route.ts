@@ -26,22 +26,26 @@ router.post('/otp/verify', VerifyOtpController)
 //For ADMINS
 
 //Get all pending food spots..
-router.get('/admin/food-spots/pending',requireRole("ADMIN"),RolesController.GetPendingFoodSpotsController);
+router.get('/admin/food-spots/pending',authMiddleware,requireRole("ADMIN"),RolesController.GetPendingFoodSpotsController);
 
 //Verify particular pending spot..
-router.patch('/admin/food-spots/:id/verify',requireRole("ADMIN"),RolesController.VerifyPendingSpotController);
-router.get('/admin/food-spots/:id',requireRole("ADMIN"),)
+router.patch('/admin/food-spots/:id/verify',authMiddleware,requireRole("ADMIN"),RolesController.VerifyPendingSpotController);
+router.get('/admin/food-spots/:id',authMiddleware,requireRole("ADMIN"),RolesController.GetPendingFoodSpotController)
 
 //For OWNER..
 
 //Get all admins
-router.get('/owner/admins',requireRole("OWNER"),RolesController.GetAllAdminsController);
+router.get('/owner/admins',authMiddleware,requireRole("OWNER"),RolesController.GetAllAdminsController);
+
+router.get('/owner/students',authMiddleware,requireRole("OWNER"),RolesController.GetAllStudentsController);
+
+router.get('/owner/food-spots/pending',authMiddleware,requireRole("OWNER"),RolesController.GetPendingFoodSpotsController);
 
 //Promotion to admin..
-router.post('/owner/admins',requireRole("OWNER"),RolesController.PromoteToAdminController);
+router.post('/owner/admins',authMiddleware,requireRole("OWNER"),RolesController.PromoteToAdminController);
 
 //Getting all admin queries.. probably in v2
 //router.get('/owner/admins/query',requireRole("OWNER"));
 
 //Demotion to a student..
-router.put('/owner/admins/:id',requireRole("OWNER"));
+router.patch('/owner/admins/:id',authMiddleware,requireRole("OWNER"),RolesController.DemoteToStudentController);

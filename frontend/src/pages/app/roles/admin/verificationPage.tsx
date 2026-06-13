@@ -29,7 +29,8 @@ const VerificationPage = () => {
     mutationFn: () => VerifyPendingFoodSpots(id, "VERIFIED"),
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ["pending-submission", id]});
-      queryClient.invalidateQueries({queryKey:['admin:pending-requests']})
+      queryClient.invalidateQueries({queryKey:['admin:pending-requests']});
+      queryClient.invalidateQueries({queryKey:['owner:pending-food-spots']});
     },
   });
 
@@ -37,26 +38,31 @@ const VerificationPage = () => {
   const RejectMutation = useMutation({
     mutationFn:()=> VerifyPendingFoodSpots(id,"REJECTED"),
     onSuccess:()=>{
-      queryClient.invalidateQueries({queryKey:["pending-submissions",id]})
-      queryClient.invalidateQueries({queryKey:['admin:pending-requests']})
+      queryClient.invalidateQueries({queryKey:["pending-submission",id]});
+      queryClient.invalidateQueries({queryKey:['admin:pending-requests']});
+      queryClient.invalidateQueries({queryKey:['owner:pending-food-spots']});
     },
   })
 
   const handleVerification = (task:string)=>{
     if(task=="APPROVE"){
-      ApproveMutation.mutate;
+      ApproveMutation.mutate();
     }else if(task=="REJECT"){
-      RejectMutation.mutate
+      RejectMutation.mutate();
     }
   }
 
-  const PendingFoodSpot : FoodSpotDTO = data;
+  const PendingFoodSpot = data?.data as FoodSpotDTO | undefined;
 
   if(isLoading){
     return <LoaderComponent/>
   }
 
   if(isError) return <ErrorPage error={error}/>
+  if(!PendingFoodSpot){
+    toast.error("Pending spot not found");
+    return <LoaderComponent/>;
+  }
   
   return (
     <div className="container mx-auto max-w-6xl px-4 py-8">

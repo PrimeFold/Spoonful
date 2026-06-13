@@ -1,11 +1,20 @@
 import * as RoleService from '../roles/roles.service'
 import { GetFoodSpotById } from '../food_spots/fs.service';
-import { VerifyPendingSpotSchema } from "../../lib/zod";
+import { GetManagedUsersSchema, PaginationSchema, VerifyPendingSpotSchema } from "../../lib/zod";
 import type { Handler } from "../../types";
 
 export const GetPendingFoodSpotsController : Handler= async(req,res)=>{
+  const validated = PaginationSchema.safeParse(req.query);
+  if (!validated.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid query parameters",
+      data: null,
+    });
+  }
+
   try {
-    const response = await RoleService.GetPendingFoodSpotsService();
+    const response = await RoleService.GetPendingFoodSpotsService(validated.data);
     if(!response.success){
       return res.status(400).json(response);
     }
@@ -19,7 +28,15 @@ export const GetPendingFoodSpotsController : Handler= async(req,res)=>{
 }
 
 export const GetPendingFoodSpotController : Handler = async(req,res)=>{
-  const {id} = req.body;
+  const rawId = req.params.id;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
+  if (!id) {
+    return res.status(400).json({
+      success:false,
+      message:"Spot id is required",
+      data:null
+    });
+  }
   try {
     const response = await GetFoodSpotById(id);
     if(!response.success){
@@ -43,7 +60,9 @@ export const VerifyPendingSpotController:Handler = async(req,res)=>{
     })
   }
   try {
-    const response = await RoleService.VerifyPendingSpotService(result.data.spotId,result.data.status);
+    const rawId = req.params.id;
+    const spotId = (Array.isArray(rawId) ? rawId[0] : rawId) ?? result.data.spotId;
+    const response = await RoleService.VerifyPendingSpotService(spotId,result.data.status);
     if(!response.success){
       return res.status(400).json(response)
     }
@@ -71,9 +90,40 @@ export const GetAllAdminsController : Handler = async(req,res)=>{
   }
 }
 
+export const GetAllStudentsController : Handler = async(req,res)=>{
+  const validated = GetManagedUsersSchema.safeParse(req.query);
+  if (!validated.success) {
+    return res.status(400).json({
+      success:false,
+      message:"Invalid query parameters",
+      data:null
+    })
+  }
+
+  try {
+    const response = await RoleService.GetAllStudentsService(validated.data);
+    if(!response.success){
+      return res.status(400).json(response)
+    }
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      success:false,
+      message:(error as Error).message ?? "Internal Server Error"
+    });
+  }
+}
+
 
 export const PromoteToAdminController : Handler = async(req,res)=>{
-    const{userId} = req.body;
+  const {userId} = req.body;
+  if (!userId) {
+    return res.status(400).json({
+      success:false,
+      message:"User id is required",
+      data:null
+    })
+  }
   try {
     const response = await RoleService.PromoteToAdminService(userId)
     if(!response.success){
@@ -88,6 +138,30 @@ export const PromoteToAdminController : Handler = async(req,res)=>{
   }
 }
 
+export const DemoteToStudentController: Handler = async(req,res)=>{
+  const rawId = req.params.id;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
+  if (!id) {
+    return res.status(400).json({
+      success:false,
+      message:"User id is required",
+      data:null
+    });
+  }
+
+  try {
+    const response = await RoleService.DemoteToStudentService(id);
+    if (!response.success) {
+      return res.status(400).json(response);
+    }
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      success:false,
+      message:(error as Error).message ?? "Internal Server Error"
+    });
+  }
+}
 
 
 

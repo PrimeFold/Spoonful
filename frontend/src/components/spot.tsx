@@ -1,37 +1,50 @@
-import { ArrowLeft, Share2, MapPin, Star, Clock, Flag } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { RateReviewModal } from "./rate-review-modal";
-import { BottomNav } from "../pages/app/bottom-nav";
 import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, Clock, Flag, MapPin, Share2, Star } from "lucide-react";
+
+import { RateReviewModal } from "./rate-review-modal";
 import { getFoodSpotById } from "../../lib/actions";
-import toast from "react-hot-toast";
 import LoaderComponent from "../../components/loader";
+import type { FoodSpotDTO } from "../../../shared/food-spots.type";
+import { BottomNav } from "./bottom-nav";
 
 export default function SpotDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const [showRateModal, setShowRateModal] = useState(false);
+  const spotId = id ?? "";
 
-  if(id == undefined){
-    return toast.error("Spot id doesn't exist")
+  const { data, error, isLoading, isError } = useQuery({
+    queryKey: ["spot", spotId],
+    queryFn: () => getFoodSpotById(spotId),
+    enabled: !!id,
+  });
+
+  const spot = data?.data as FoodSpotDTO | undefined;
+
+  if (!id) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="rounded-3xl border border-border bg-card px-6 py-10 text-center space-y-3">
+          <div className="text-4xl">⚠️</div>
+          <p className="text-sm font-semibold text-foreground">Spot id doesn&apos;t exist</p>
+          <p className="text-sm text-muted-foreground">Go back and open a valid listing.</p>
+        </div>
+      </div>
+    );
   }
 
-  const { data , error , isLoading , isError} = useQuery({
-    queryKey:[`spot`,id],
-    queryFn:()=>getFoodSpotById(id)
-  })
-  const spot = data;
-
-  if(isLoading) {
+  if (isLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-background">
-        <LoaderComponent/>
+        <LoaderComponent />
       </main>
-    )
+    );
   }
 
-  if(isError){
-    return(
-       <div className="min-h-screen bg-background flex items-center justify-center px-4">
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="text-center space-y-3">
           <div className="text-4xl">⚠️</div>
           <p className="text-sm font-semibold text-red-500">
@@ -39,10 +52,31 @@ export default function SpotDetailPage() {
           </p>
         </div>
       </div>
-    )
+    );
   }
 
-  const [showRateModal, setShowRateModal] = useState(false);
+  if (!spot) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="rounded-3xl border border-border bg-card px-6 py-10 text-center space-y-3">
+          <div className="text-4xl">⚠️</div>
+          <p className="text-sm font-semibold text-foreground">Spot not found</p>
+          <p className="text-sm text-muted-foreground">
+            This listing may have been removed or is still being processed.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const locationLabel = [
+    spot.location?.locality,
+    spot.location?.town,
+    spot.location?.city,
+    spot.location?.state,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <div className="min-h-screen bg-background pb-28 text-foreground">
@@ -60,7 +94,7 @@ export default function SpotDetailPage() {
 
         <div className="absolute inset-x-0 top-0 flex items-center justify-between px-4 py-4">
           <Link
-            to="/app/home"
+            to="/app/search"
             className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-card/80 text-foreground shadow-lg shadow-slate-900/10 transition hover:bg-card"
             aria-label="Go back"
           >
@@ -77,35 +111,38 @@ export default function SpotDetailPage() {
         <div className="absolute inset-x-4 bottom-4 rounded-[2rem] border border-border bg-card/95 p-5 shadow-xl shadow-slate-950/10 backdrop-blur-sm">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-primary">{spot.priceRange}</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-primary">
+                {spot.status ?? "PENDING"}
+              </p>
               <h1 className="mt-3 text-3xl font-extrabold text-foreground">{spot.name}</h1>
               <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 <span className="inline-flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
-                  {spot.area}
+                  {locationLabel || "Unknown location"}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-secondary/90 px-3 py-1 text-[11px] font-semibold text-secondary-foreground">
                   <Star className="h-3.5 w-3.5 fill-current text-primary" />
-                  {spot.rating}
+                  {spot.spotRating}
                 </span>
-                <span className="rounded-full bg-secondary/90 px-3 py-1 text-[11px] font-semibold text-secondary-foreground">{spot.reviewCount} reviews</span>
               </div>
             </div>
             <div className="flex flex-col gap-2 text-right">
-              <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Open now</span>
-              <span className="rounded-2xl bg-green-50 px-3 py-2 text-xs font-semibold text-green-700">Open until 10:30 PM</span>
+              <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Fresh listing</span>
+              <span className="rounded-2xl bg-green-50 px-3 py-2 text-xs font-semibold text-green-700">
+                Submitted for review
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-4 pt-6">
+      <main className="mx-auto max-w-4xl px-4 pt-6">
         <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-5">
             <div className="rounded-[2rem] border border-border bg-card p-5 shadow-sm shadow-slate-900/5">
               <h2 className="text-lg font-extrabold text-foreground">About this place</h2>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                A beloved neighborhood spot known for generous portions and honest home-style cooking. Popular among locals for consistently great value and fast service.
+                A community-added spot waiting for attention from the moderation queue.
               </p>
             </div>
 
@@ -115,12 +152,14 @@ export default function SpotDetailPage() {
                   <Clock className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">Open hours</p>
-                  <p className="mt-1 text-sm font-bold text-foreground">7:00 AM – 10:30 PM</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                    Status
+                  </p>
+                  <p className="mt-1 text-sm font-bold text-foreground">{spot.status ?? "PENDING"}</p>
                 </div>
               </div>
               <div className="mt-4 rounded-3xl bg-secondary/80 px-4 py-3 text-sm text-muted-foreground">
-                Consistently open through the evening with curated comfort food favorites and fast pickup service.
+                Review it carefully before it goes live.
               </div>
             </div>
 

@@ -114,6 +114,25 @@ export const FoodSpotRepository = {
     })
   },
 
+  async findPendingSpotsPaginated(skip:number, take:number){
+    return prisma.foodSpots.findMany({
+      where:{
+        status:"PENDING"
+      },
+      skip,
+      take,
+      select:FOOD_SPOT_SELECT
+    })
+  },
+
+  async countPendingSpots(){
+    return prisma.foodSpots.count({
+      where:{
+        status:"PENDING"
+      }
+    })
+  },
+
   async verifyPendingSpot(id:string,status:VerificationStatus){
     return prisma.foodSpots.update({
       where:{

@@ -127,3 +127,51 @@
 - Today I prepared the verification page , queries and mutations.
 - Wrote helper functions as well as modified some types to get user id.
 - Tomorrow I'd be preparing the OWNER dashboard and respective functions.
+
+
+# Day-12 (12/06/2026)
+
+- Built the OWNER dashboard end-to-end.
+- What I added on the backend:
+
+  - Added paginated owner-facing routes for:
+    - pending food spots
+    - all admins
+    - students
+  - Wired controller + service + repository functions for:
+    - fetching all admins
+    - fetching students with pagination and search
+    - promoting a student to admin
+    - demoting an admin back to student
+  - Added pagination support for the pending food-spots list so the owner queue behaves consistently with the rest of the app.
+  - Fixed route protection by making sure role-protected routes still go through `authMiddleware` before `requireRole`.
+  - Kept the role mutation logic safe by only allowing:
+    - `STUDENT -> ADMIN`
+    - `ADMIN -> STUDENT`
+  - Updated the food-spot DTO mapper so the owner queue can show timestamps and the submitted-by details properly.
+
+- What I added on the frontend:
+
+  - Created a new owner dashboard page.
+  - Added UI sections for:
+    - food spots being added
+    - interactable admins list
+    - interactable students list
+  - Added pagination controls for the student list.
+  - Added optimistic updates with TanStack Query for:
+    - promoting a student
+    - demoting an admin
+  - Added frontend helper functions in `actions.ts` for the new owner endpoints.
+  - Added owner navigation support in the navbar.
+  - Added the owner route in the app router.
+
+- Cleanup / fixes:
+  - Updated the existing admin verification flow to match the corrected API shape.
+  - Fixed pending spot route usage so owner/admin UI calls the right endpoints.
+  - Ran type checks on both frontend and backend to confirm the implementation is wired correctly.
+  - Reworked the search page to use the real food-spot API instead of mock data.
+  - Added responsive search UI, tag filters, pagination, and smoother loading states.
+  - Cleaned up the spot detail page so it handles missing IDs, loading, error, and empty states properly.
+  - Added small Redis caching for the admin pending queue and invalidated it after verification so the queue stays fresh.
+  - Standardized the API response types in a shared file so frontend and backend speak the same shape.
+  - Replaced a few hard loaders with lightweight skeletons so the app feels faster while data is loading.

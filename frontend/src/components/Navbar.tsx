@@ -85,7 +85,7 @@ const Navbar = ({username , variant }:{username? : string , variant :string }) =
     </header>
   )
 
-  if(variant=="ADMIN") return(
+  if(variant=="ADMIN" || variant=="OWNER") return(
     <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           {/* Logo */}
@@ -93,9 +93,14 @@ const Navbar = ({username , variant }:{username? : string , variant :string }) =
             <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground text-xs font-black">S</span>
             </div>
-            <span className="font-black text-foreground tracking-tight text-lg">
-              Spoonful
-            </span>
+            <div className="flex flex-col leading-none">
+              <span className="font-black text-foreground tracking-tight text-lg">
+                Spoonful
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                {variant === "OWNER" ? "Owner Dashboard" : "Admin Dashboard"}
+              </span>
+            </div>
           </div>
 
           {/* Actions */}

@@ -1,4 +1,4 @@
-import { SpotRating, Tags } from "../generated/prisma/client";
+import type { SpotRating, Tags } from "../generated/prisma/enums";
 
 export const generateAllSpotsKey = ( search: string, tags: Tags[], rating: SpotRating | undefined,  page: number , limit: number): string => {
     
@@ -20,4 +20,8 @@ export const generateUserSpotsKey = (  userId: string,  search: string,  tags: T
   const normalizedRating = rating ?? "all";
 
   return [ "user-submissions", userId, normalizedSearch, normalizedTags, normalizedRating, page, limit,].join(":");
+};
+
+export const generatePendingSpotsKey = (page: number, limit: number): string => {
+  return ["pending-food-spots", page, limit].join(":");
 };

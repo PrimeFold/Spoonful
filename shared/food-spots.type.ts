@@ -1,4 +1,4 @@
-import { SpotRating, Tags, VerificationStatus } from '../backend/src/generated/prisma/client'
+import { SpotRating, Tags, VerificationStatus } from '../backend/src/generated/prisma/enums'
 
 export interface FoodSpotDTO {
   id?:string

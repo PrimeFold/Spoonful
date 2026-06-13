@@ -11,6 +11,9 @@ import Verification from "./pages/auth/verification"
 import ProfilePage from "./pages/app/profile"
 import AddSpotPage from "./pages/app/add-spot"
 import VerificationPage from "./pages/app/roles/admin/verificationPage"
+import OwnerDashboard from "./pages/app/roles/owner/dashboard"
+import SearchPage from "./pages/app/search"
+import SpotDetailPage from "./components/spot"
 
 function App() {
   return (
@@ -27,9 +30,12 @@ function App() {
         //Protected Routes
         <Route element={<ProtectedRoute/>}>
           <Route path="/app/home" element={<HomePage/>}/>
+          <Route path="/app/search" element={<SearchPage/>}/>
           <Route path="/app/profile" element={<ProfilePage/>}/>
           <Route path="/app/add-spot" element={<AddSpotPage/>}/>
-          <Route path="/admin/food-spots/:spotId" element={<VerificationPage/>}/>
+          <Route path="/spot/:id" element={<SpotDetailPage/>}/>
+          <Route path="/admin/food-spots/:id" element={<VerificationPage/>}/>
+          <Route path="/owner/dashboard" element={<OwnerDashboard/>}/>
         </Route> 
       </Routes>
       

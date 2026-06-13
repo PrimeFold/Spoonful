@@ -1,5 +1,7 @@
 
 import type { SpotRatingDTO, TagsDTO, VerificationStatusDTO } from "../../shared/food-spots.type";
+import type { GetManagedUsersProps, ManagedUsersResponse } from "../../shared/roles.type";
+import type { ApiResponse } from "../../shared/api.types";
 import { api } from "./axios";
 
 interface Location{
@@ -65,18 +67,52 @@ export const AddFoodSpot = async(name: string, location:Location, rating?: SpotR
 }
 
 
-export const GetPendingFoodSpots = async()=>{
-    const {data} = await api.get('/admin/food-spots/pending');
+const cleanParams = <T extends Record<string, unknown>>(params: T) =>
+  Object.fromEntries(
+    Object.entries(params).filter(([_, value]) => {
+      if (value === undefined || value === null || value === "") return false;
+      if (Array.isArray(value) && value.length === 0) return false;
+      return true;
+    })
+  );
+
+export const GetPendingFoodSpots = async({page = 1, limit = 10}:{page?:number,limit?:number}={})=>{
+    const {data} = await api.get('/admin/food-spots/pending',{params:cleanParams({page,limit})});
+    return data;
+}
+
+export const GetOwnerPendingFoodSpots = async({page = 1, limit = 10}:{page?:number,limit?:number}={})=>{
+    const {data} = await api.get('/owner/food-spots/pending',{params:cleanParams({page,limit})});
     return data;
 }
 
 export const VerifyPendingFoodSpots = async(id:string,status:VerificationStatusDTO)=>{
-    const {data} = await api.post(`/admin/food-spots/${id}/verify`,status);
+    const {data} = await api.patch(`/admin/food-spots/${id}/verify`,{spotId:id,status});
     return data;
 }
 
 export const GetPendingFoodSpotById = async(id:string)=>{
-    const {data }= await api.post(`/admin/food-spots/${id}`,id);
+    const {data }= await api.get(`/admin/food-spots/${id}`);
+    return data;
+}
+
+export const GetAllAdmins = async()=>{
+    const {data} = await api.get('/owner/admins');
+    return data;
+}
+
+export const GetAllStudents = async({page,limit,search}:GetManagedUsersProps):Promise<ApiResponse<ManagedUsersResponse>>=>{
+    const {data} = await api.get('/owner/students',{params:cleanParams({page,limit,search})});
+    return data;
+}
+
+export const PromoteToAdmin = async(userId:string)=>{
+    const {data} = await api.post('/owner/admins',{userId});
+    return data;
+}
+
+export const DemoteToStudent = async(userId:string)=>{
+    const {data} = await api.patch(`/owner/admins/${userId}`);
     return data;
 }
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SpotRating, Tags, VerificationStatus } from "../generated/prisma/client";
+import { SpotRating, Tags, VerificationStatus } from "../generated/prisma/enums";
 
 export const GetFoodSpotsSchema = z.object({
   search: z.preprocess((value) => {
@@ -14,6 +14,22 @@ export const GetFoodSpotsSchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(20).default(10)
 });
+
+export const PaginationSchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(20).default(10),
+});
+
+export const GetManagedUsersSchema = PaginationSchema.extend({
+  search: z.preprocess((value) => {
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      return trimmed === "" ? undefined : trimmed;
+    }
+    return value;
+  }, z.string().min(1).max(50).optional()),
+});
+
 export const GetUserSubmissionsSchema = z.object({
   userId:z.string(),
   search: z.preprocess((value) => {
