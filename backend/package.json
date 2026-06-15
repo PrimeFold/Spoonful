@@ -7,7 +7,7 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand --passWithNoTests",
-    "start": "node dist/backend/src/server.js",
+    "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "build": "npm install && npx prisma generate && npm run build",
     "type-check": "tsc --noEmit"
