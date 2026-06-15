@@ -9,7 +9,8 @@ import { auth } from './lib/auth/auth';
 import { router } from './routes/route';
 
 const app = express();
-const baseUrl = process.env.BASE_URL
+const baseUrl = process.env.BASE_URL;
+const frontendUrl = process.env.FRONTEND_URL;
 if(!baseUrl){
     console.log("base url not found")
     process.exit(1);
@@ -18,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 
 
 app.use(cors({
-    origin:[baseUrl as string, 'http://localhost:5173'],
+    origin:[frontendUrl as string, 'http://localhost:5173'],
     credentials: true
 }));
 app.use(helmet());
