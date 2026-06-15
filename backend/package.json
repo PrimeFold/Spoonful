@@ -9,7 +9,7 @@
     "test:ci": "jest --runInBand --passWithNoTests",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "build": "npm install && npx prisma generate && npm run build",
+    "build": "tsc",
     "type-check": "tsc --noEmit"
   },
   "keywords": [],
