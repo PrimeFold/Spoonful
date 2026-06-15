@@ -1,10 +1,10 @@
 {
-  "extends":"../tsconfig.base.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "..",
+    "rootDir": "./src",
     "outDir": "./dist",
     "module": "esnext",
-    "moduleResolution": "bundler", 
+    "moduleResolution": "bundler",
     "target": "es2023",
     "lib": ["ES2023"],
     "types": ["node", "jest"],
@@ -21,5 +21,5 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["src","../shared"]
+  "include": ["src", "../shared"]
 }
