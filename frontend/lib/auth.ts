@@ -18,9 +18,3 @@ export const generateOtp = async()=>{
   return data ;
 }
 
-export const findUser = async(email:string)=>{
-  const{data} = await api.get('/current-user-details',{
-    params:{email}
-  })
-  return data;
-}

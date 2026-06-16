@@ -1,7 +1,7 @@
 
 import { auth } from "../../lib/auth/auth";
 import type { Handler } from "../../types";
-import { verifyOtp, generateOtp, findUserVerificationStatusService } from "./auth.service";
+import { verifyOtp, generateOtp} from "./auth.service";
 
 export const VerifyOtpController : Handler = async (
   req,
@@ -73,20 +73,3 @@ export const GenerateOtpController : Handler= async (req,res) => {
     });
   }
 };
-
-export const findUserVerificationStatusController: Handler = async(req,res)=>{
-  const {email} = req.body;
-  try {
-    const response = await findUserVerificationStatusService(email);
-    if(!response?.success){
-      return res.status(400).json(response);
-    }
-    return res.status(200).json(response);
-  } catch (error) {
-    return res.status(500).json({
-      success:false,
-      message:(error as Error).message,
-      data:null
-    })
-  }
-}

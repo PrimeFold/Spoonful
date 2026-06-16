@@ -9,7 +9,6 @@ import * as RolesController from '../api/roles/roles.controller'
 
 export const router = Router();
 
-router.get('/current-user-details',AuthController.findUserVerificationStatusController);
 router.get('/app/get-food-spots',authMiddleware,FoodSpotController.getAllFoodSpotsController);
 router.get('/app/get-food-spot/:id',authMiddleware,FoodSpotController.getFoodSpotById)
 router.get('/app/my-food-spots',authMiddleware,limiter,FoodSpotController.getFoodSpotsByUserIdController);

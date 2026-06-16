@@ -4,7 +4,7 @@ import { Eye, EyeOff } from "lucide-react"
 import toast from 'react-hot-toast'
 import { useAuth } from "../../context/AuthContext"
 import LoaderComponent from "../../../components/loader"
-import { findUser, generateOtp, type User } from "../../../lib/auth"
+import { authClient,  generateOtp } from "../../../lib/auth"
 
 export default function LoginPage() {
   const [loading,setLoading] = useState(false);
@@ -20,10 +20,11 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await signIn({email:email,password:password});
-      const user = await findUser(email);
-      await new Promise(resolve => setTimeout(resolve, 400));
+      const session = authClient.useSession();
+      const user = session.data?.user;
+      await new Promise(resolve => setTimeout(resolve, 500));
       setLoading(false)
-      if(user.emailVerified==true){
+      if(user?.emailVerified==true){
         navigate("/app/home")
       }else{
 
