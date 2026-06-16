@@ -13,11 +13,18 @@ type SignInCredentials = {
   password: string;
 };
 
+type ForgotPasswordCredentials = {
+  token:string;
+  newPassword:string;
+}
+
 type SignUpCredentials = {
   name: string;
   email: string;
   password: string;
 };
+
+
 
 export interface AuthContextType {
   user: User | null;
@@ -25,6 +32,8 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   signIn: (credentials: SignInCredentials) => Promise<void>;
   signUp: (credentials: SignUpCredentials) => Promise<void>;
+  resetPassword:(credentials:ForgotPasswordCredentials) => Promise<void>;
+  RequestPasswordReset:(email:string)=>Promise<void>;
   signOut: () => Promise<void>;
   otpVerified: boolean;
 }
@@ -51,6 +60,28 @@ function AuthProvider({children}: { children: ReactNode;}) {
     
     
   };
+
+  const RequestPasswordReset = async(email:string)=>{
+    try {
+      await authClient.requestPasswordReset({
+        email,
+        redirectTo:"https://spoonful-liard.com/reset-password"
+      });
+    } catch (error) {
+      throw new Error((error as Error).message || "Internal Server Error")
+    }
+  }
+
+  const resetPassword = async({token,newPassword}:ForgotPasswordCredentials)=>{
+    try {
+      await authClient.resetPassword({
+        token,
+        newPassword
+      })
+    } catch (error) {
+      throw new Error((error as Error).message || "Failed to reset password");
+    }
+  }
 
 
   const signUp = async ({name,email,password}: SignUpCredentials) => {
@@ -81,6 +112,8 @@ function AuthProvider({children}: { children: ReactNode;}) {
      otpVerified,
      signIn,
      signUp,
+     resetPassword,
+     RequestPasswordReset,
      signOut,
    }),
     [user, isPending, isAuthenticated]

@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer'
-import crypto from 'crypto'
 
 const user = process.env.SMTP_USER;
 const pass = process.env.SMTP_PASS;

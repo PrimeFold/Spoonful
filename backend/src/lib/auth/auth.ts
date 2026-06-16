@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../generated/prisma/client";
 import dotenv from 'dotenv'
+import { transporter } from "./nodemailer";
 
 dotenv.config();
 
@@ -24,7 +25,18 @@ export const auth = betterAuth({
         provider: "postgresql", 
     }),
     emailAndPassword:{
-        enabled:true
+        enabled:true,
+        revokeSessionsOnPasswordReset:true,
+        sendResetPassword: async ({user, url, token}, request) => {
+          await transporter.sendMail({
+            to: user.email,
+            subject: "Reset your password",
+            text: `
+              <p>Click below to reset your password:</p>
+              <a href="${url}">Reset Password</a>
+            `,
+          });
+        },
     },
     baseURL:baseUrl,
     cookieOptions:{

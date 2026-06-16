@@ -14,6 +14,8 @@ import VerificationPage from "./pages/app/roles/admin/verificationPage"
 import OwnerDashboard from "./pages/app/roles/owner/dashboard"
 import SearchPage from "./pages/app/search"
 import SpotDetailPage from "./components/spot"
+import PasswordResetEmailPage from "./pages/auth/pass-reset-email"
+import ResetPasswordPage from "./pages/auth/reset-password"
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
           <Route path="/spot/:id" element={<SpotDetailPage/>}/>
           <Route path="/admin/food-spots/:id" element={<VerificationPage/>}/>
           <Route path="/owner/dashboard" element={<OwnerDashboard/>}/>
+          <Route path="/password-reset-email" element={<PasswordResetEmailPage/>}/>
+          <Route path="/reset-password" element={<ResetPasswordPage/>}/>
         </Route> 
       </Routes>
       

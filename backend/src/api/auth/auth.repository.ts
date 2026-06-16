@@ -1,7 +1,6 @@
 import { prisma } from "../../lib/auth/auth";
 
 export const AuthRepository = {
-  
     async SaveOTPtoDb(hashedOtp:string,email:string){
          return await prisma.oTP.create({
             data: {
@@ -39,6 +38,7 @@ export const AuthRepository = {
         return await prisma.oTP.deleteMany({
           where: { email },
         });
-    }
+    },
+
 
 }
