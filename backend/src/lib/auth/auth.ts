@@ -12,7 +12,12 @@ const connectionString = `${process.env.DATABASE_URL}`;
 const adapter = new PrismaPg({ connectionString });
 export const prisma = new PrismaClient({adapter});
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+let baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+if (baseUrl === '/') {
+    baseUrl = 'http://localhost:3000';
+}
+console.log("BASE URL =", baseUrl);
+console.log("NODE_ENV =", process.env.NODE_ENV);
 
 if(!baseUrl){
     console.log("base url not found")
@@ -46,13 +51,21 @@ export const auth = betterAuth({
         cookiePrefix:"better-auth",
         disableOriginCheck:process.env.NODE_ENV!=='production',
         defaultCookieAttributes:{
-            sameSite:"none",
-            secure:true,
+            sameSite: process.env.NODE_ENV === 'production' ? "none" : "lax",
+            secure: process.env.NODE_ENV === 'production',
             httpOnly:true
         }
-
     },
-    
+    user: {
+        additionalFields: {
+            role: {
+                type: "string",
+                required: false,
+                defaultValue: "STUDENT",
+                input: false, // not settable by user
+            },
+        },
+    },
 });
 console.log(auth.options);
 

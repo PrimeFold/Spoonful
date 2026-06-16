@@ -175,3 +175,99 @@
   - Added small Redis caching for the admin pending queue and invalidated it after verification so the queue stays fresh.
   - Standardized the API response types in a shared file so frontend and backend speak the same shape.
   - Replaced a few hard loaders with lightweight skeletons so the app feels faster while data is loading.
+
+
+# Day-13 (16/06/2026)
+
+Today was a heavy debugging session end-to-end across auth, Prisma, and routing. Here's every problem faced and how it was solved.
+
+---
+
+## Bug 1 — 401 on `/otp/generate` (OTP never sent)
+
+**Problem:**
+After a successful sign-in, the app tried to call `/otp/generate` to send the verification email. This threw a `401 Unauthorized` even though the user was signed in.
+
+**Root cause:**
+The backend OTP controller calls `auth.api.getSession({ headers: req.headers })` to verify the session. For this to work, the browser must send the session cookie with the request. The cookie was configured with `secure: true` and `sameSite: "none"` in the backend auth config. In a local dev environment running on plain `http://`, the browser **silently drops** `secure` cookies — they can only be sent over HTTPS. So the cookie was never attached, and the backend saw no session, hence `401`.
+
+**Fix:**
+In `auth.ts`, set `secure` and `sameSite` conditionally:
+```ts
+sameSite: process.env.NODE_ENV === 'production' ? "none" : "lax",
+secure: process.env.NODE_ENV === 'production',
+```
+In dev, `lax` + non-secure allows the cookie to travel over HTTP between the frontend (`localhost:5173`) and backend (`localhost:3000`).
+
+---
+
+## Bug 2 — React hook called inside event handler (login silently broken)
+
+**Problem:**
+`authClient.useSession()` was called inside the `handleSubmit` event handler in `login.tsx`. This violates the **Rules of Hooks** — hooks can only be called at the top level of a component, not inside callbacks, conditionals, or event handlers.
+
+**Root cause:**
+Because the hook was called in a non-hook context, it either threw silently or returned stale/undefined data. The `user` object was always `undefined`, so the email-verified check never ran correctly and navigation never happened after login.
+
+**Fix:**
+Read the `user` directly from the `signIn()` response object (`response.data.user`) instead of calling `useSession()` again. The sign-in response already contains the full user object from better-auth.
+
+---
+
+## Bug 3 — 400 on `GET /app/get-food-spots` after login
+
+**Problem:**
+After a successful login, the home page tried to fetch food spots and got a `400 Bad Request`. Looking at the error, Prisma was throwing:
+```
+The column `FoodSpots.createdAt` does not exist in the current database.
+```
+
+**Root cause:**
+`FOOD_SPOT_SELECT` in `fs.repository.ts` includes `createdAt: true`. The `schema.prisma` file had the `createdAt DateTime @default(now())` field on the `FoodSpots` model, but **no migration had ever been run to actually add it to the PostgreSQL table**. The generated Prisma client was also stale and didn't include `createdAt` in its `FoodSpotsSelect` type. Every `findMany` call threw a Prisma runtime error, which `fs.service.ts` caught and returned as `success: false`, which the controller converted to a `400`.
+
+**Fix:**
+```bash
+npx prisma migrate dev --name add_createdat_to_foodspots
+npx prisma generate
+```
+The migration added the column to the DB, and `generate` updated the Prisma client types. The `tsx --watch` dev server hot-reloaded and picked up the new client automatically.
+
+**Lesson:** Whenever you add a field to `schema.prisma`, always immediately run `prisma migrate dev` (or `prisma db push` in early dev). A schema drift between the file and the real DB is silent at the TypeScript level but explodes at runtime.
+
+---
+
+## Bug 4 — Owner and Admin users land on the regular home page after login
+
+**Problem:**
+Accounts with `role: OWNER` or `role: ADMIN` were being routed to `/app/home` (the student feed) after login. There was no role-based routing logic.
+
+**Root cause (part 1) — Role not in session:**
+`better-auth` only returns standard fields (`id`, `name`, `email`, `emailVerified`, `image`) in the session by default. The `role` field from the `User` model was never included in the session response, so the frontend had no way to read it.
+
+**Fix:** Add `user.additionalFields` to `auth.ts` on the backend:
+```ts
+user: {
+  additionalFields: {
+    role: { type: "string", defaultValue: "STUDENT", input: false },
+  },
+},
+```
+And use `inferAdditionalFields` plugin in the frontend `createAuthClient()` so the TypeScript type also reflects the `role` property.
+
+**Root cause (part 2) — No role-based redirect in login:**
+`login.tsx` always called `navigate("/app/home")` regardless of role.
+
+**Fix:** After sign-in, read `role` from the response user object and route accordingly:
+- `OWNER` → `/owner/dashboard`
+- `ADMIN` → `/admin/dashboard`
+- `STUDENT` → `/app/home`
+
+**Root cause (part 3) — Admin dashboard was fatally broken:**
+`AdminDashboard` was importing `useParams` and doing:
+```ts
+const { id } = useParams();
+if (!id) return toast.error("Id not found!") // ← returns void, not JSX!
+```
+`toast.error()` returns `void`, not a React element. This caused the component to return nothing on every render (since `/admin/dashboard` has no `:id` param), making the page permanently blank with no error.
+
+**Fix:** Removed the `useParams` pattern entirely — the admin dashboard is a standalone page that fetches all pending spots globally; it doesn't need a URL param. Also added the missing `/admin/dashboard` route to `App.tsx`.

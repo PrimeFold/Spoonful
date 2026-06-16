@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch",
-    "test:ci": "jest --runInBand --passWithNoTests",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "start": "tsx src/server.ts",
     "dev": "tsx watch src/server.ts",
     "build": "npx prisma generate",
@@ -45,6 +44,7 @@
     "jest": "^30.4.2",
     "prisma": "^7.8.0",
     "supertest": "^7.2.2",
-    "ts-jest": "^29.4.11"
+    "ts-jest": "^29.4.11",
+    "vitest": "^4.1.9"
   }
 }

@@ -12,6 +12,7 @@ import ProfilePage from "./pages/app/profile"
 import AddSpotPage from "./pages/app/add-spot"
 import VerificationPage from "./pages/app/roles/admin/verificationPage"
 import OwnerDashboard from "./pages/app/roles/owner/dashboard"
+import AdminDashboard from "./pages/app/roles/admin/dashboard"
 import SearchPage from "./pages/app/search"
 import SpotDetailPage from "./components/spot"
 import PasswordResetEmailPage from "./pages/auth/pass-reset-email"
@@ -27,6 +28,8 @@ function App() {
         <Route path="/login" element={<LoginPage/>}/> 
         <Route path="/signup" element={<SignupPage/>}/>
         <Route path="/verification" element={<Verification/>}/>
+        <Route path="/password-reset-email" element={<PasswordResetEmailPage/>}/>
+        <Route path="/reset-password" element={<ResetPasswordPage/>}/>
 
         
         //Protected Routes
@@ -37,9 +40,8 @@ function App() {
           <Route path="/app/add-spot" element={<AddSpotPage/>}/>
           <Route path="/spot/:id" element={<SpotDetailPage/>}/>
           <Route path="/admin/food-spots/:id" element={<VerificationPage/>}/>
+          <Route path="/admin/dashboard" element={<AdminDashboard/>}/>
           <Route path="/owner/dashboard" element={<OwnerDashboard/>}/>
-          <Route path="/password-reset-email" element={<PasswordResetEmailPage/>}/>
-          <Route path="/reset-password" element={<ResetPasswordPage/>}/>
         </Route> 
       </Routes>
       

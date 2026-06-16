@@ -1,38 +1,38 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, vi, beforeAll } from "vitest";
 
-const redisMock: any = {
-  get: jest.fn(),
-  setex: jest.fn(),
-  keys: jest.fn(),
-  del: jest.fn(),
+const mockRedis: any = {
+  get: vi.fn(),
+  setex: vi.fn(),
+  keys: vi.fn(),
+  del: vi.fn(),
 };
 
-const repositoryMock: any = {
-  findPendingSpotsPaginated: jest.fn(),
-  countPendingSpots: jest.fn(),
-  verifyPendingSpot: jest.fn(),
+const mockRepository: any = {
+  findPendingSpotsPaginated: vi.fn(),
+  countPendingSpots: vi.fn(),
+  verifyPendingSpot: vi.fn(),
 };
 
-const rolesRepositoryMock: any = {
-  GetAllAdmins: jest.fn(),
-  GetAllStudents: jest.fn(),
-  PromoteToAdmin: jest.fn(),
-  DemoteToStudent: jest.fn(),
+const mockRolesRepository: any = {
+  GetAllAdmins: vi.fn(),
+  GetAllStudents: vi.fn(),
+  PromoteToAdmin: vi.fn(),
+  DemoteToStudent: vi.fn(),
 };
 
-jest.mock("../lib/redis", () => ({
+vi.mock("../lib/redis", () => ({
   __esModule: true,
-  redis: redisMock,
+  redis: mockRedis,
 }));
 
-jest.mock("../api/food_spots/fs.repository", () => ({
+vi.mock("../api/food_spots/fs.repository", () => ({
   __esModule: true,
-  FoodSpotRepository: repositoryMock,
+  FoodSpotRepository: mockRepository,
 }));
 
-jest.mock("../api/roles/roles.repository", () => ({
+vi.mock("../api/roles/roles.repository", () => ({
   __esModule: true,
-  RolesRepository: rolesRepositoryMock,
+  RolesRepository: mockRolesRepository,
 }));
 
 let GetPendingFoodSpotsService: typeof import("../api/roles/roles.service").GetPendingFoodSpotsService;
@@ -54,16 +54,16 @@ describe("roles service", () => {
 
   beforeEach(() => {
     // Keep each test isolated so one scenario does not leak mock calls into the next one.
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it("returns cached pending spots when redis has data", async () => {
     // If Redis already has the payload, the service should short-circuit and not hit the repository.
-    redisMock.get.mockResolvedValue(
+    mockRedis.get.mockResolvedValue(
       JSON.stringify({
         items: [{ id: "spot-1", name: "Cached Spot" }],
         pagination: { page: 1, limit: 6, total: 1, hasMore: false },
@@ -78,13 +78,13 @@ describe("roles service", () => {
       items: [{ id: "spot-1", name: "Cached Spot" }],
       pagination: { page: 1, limit: 6, total: 1, hasMore: false },
     });
-    expect(repositoryMock.findPendingSpotsPaginated).not.toHaveBeenCalled();
+    expect(mockRepository.findPendingSpotsPaginated).not.toHaveBeenCalled();
   });
 
   it("fetches pending spots and stores them in redis when cache is empty", async () => {
     // When cache is empty, the service should fetch fresh data and write it back with a short TTL.
-    redisMock.get.mockResolvedValue(null);
-    repositoryMock.findPendingSpotsPaginated.mockResolvedValue([
+    mockRedis.get.mockResolvedValue(null);
+    mockRepository.findPendingSpotsPaginated.mockResolvedValue([
       {
         id: "spot-1",
         name: "Campus Corner",
@@ -101,7 +101,7 @@ describe("roles service", () => {
         createdAt: new Date("2026-06-12T00:00:00.000Z"),
       },
     ]);
-    repositoryMock.countPendingSpots.mockResolvedValue(1);
+    mockRepository.countPendingSpots.mockResolvedValue(1);
 
     const result = await GetPendingFoodSpotsService({ page: 1, limit: 6 });
 
@@ -113,7 +113,7 @@ describe("roles service", () => {
       status: "PENDING",
       createAt: "2026-06-12T00:00:00.000Z",
     });
-    expect(redisMock.setex).toHaveBeenCalledWith(
+    expect(mockRedis.setex).toHaveBeenCalledWith(
       "pending-food-spots:1:6",
       15,
       JSON.stringify(result.data)
@@ -122,16 +122,16 @@ describe("roles service", () => {
 
   it("invalidates pending queue cache after a verification", async () => {
     // Verifying a spot should clear any pending-queue cache keys so admins do not see stale data.
-    redisMock.keys.mockResolvedValue([
+    mockRedis.keys.mockResolvedValue([
       "pending-food-spots:1:6",
       "pending-food-spots:2:6",
     ]);
-    repositoryMock.verifyPendingSpot.mockResolvedValue({ id: "spot-1" });
+    mockRepository.verifyPendingSpot.mockResolvedValue({ id: "spot-1" });
 
     const result = await VerifyPendingSpotService("spot-1", "VERIFIED");
 
     expect(result.success).toBe(true);
-    expect(redisMock.del).toHaveBeenCalledWith(
+    expect(mockRedis.del).toHaveBeenCalledWith(
       "pending-food-spots:1:6",
       "pending-food-spots:2:6"
     );
@@ -139,7 +139,7 @@ describe("roles service", () => {
 
   it("returns paginated students", async () => {
     // Owners should get a paginated student list, not a raw unbounded table dump.
-    rolesRepositoryMock.GetAllStudents.mockResolvedValue({
+    mockRolesRepository.GetAllStudents.mockResolvedValue({
       students: [
         {
           id: "user-2",
@@ -168,7 +168,7 @@ describe("roles service", () => {
 
   it("promotes and demotes users through the repository layer", async () => {
     // These are the two core role-change actions that the owner dashboard depends on.
-    rolesRepositoryMock.PromoteToAdmin.mockResolvedValue({
+    mockRolesRepository.PromoteToAdmin.mockResolvedValue({
       id: "user-3",
       name: "Riya",
       email: "riya@example.com",
@@ -177,7 +177,7 @@ describe("roles service", () => {
       createdAt: "2026-06-12T00:00:00.000Z",
       updatedAt: "2026-06-12T00:00:00.000Z",
     });
-    rolesRepositoryMock.DemoteToStudent.mockResolvedValue({
+    mockRolesRepository.DemoteToStudent.mockResolvedValue({
       id: "user-4",
       name: "Kabir",
       email: "kabir@example.com",
@@ -192,7 +192,7 @@ describe("roles service", () => {
 
     expect(promoted.success).toBe(true);
     expect(demoted.success).toBe(true);
-    expect(rolesRepositoryMock.PromoteToAdmin).toHaveBeenCalledWith("user-3");
-    expect(rolesRepositoryMock.DemoteToStudent).toHaveBeenCalledWith("user-4");
+    expect(mockRolesRepository.PromoteToAdmin).toHaveBeenCalledWith("user-3");
+    expect(mockRolesRepository.DemoteToStudent).toHaveBeenCalledWith("user-4");
   });
 });

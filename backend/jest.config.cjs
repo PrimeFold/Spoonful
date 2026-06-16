@@ -11,6 +11,9 @@ module.exports = {
   transform: {
     "^.+\\.ts$": ["ts-jest", { useESM: true }],
   },
+  transformIgnorePatterns: [
+    "node_modules/(?!(better-auth|better-call|@better-auth)/)"
+  ],
   testMatch: [
     "<rootDir>/src/**/*.test.ts",
     "<rootDir>/src/**/*.spec.ts",

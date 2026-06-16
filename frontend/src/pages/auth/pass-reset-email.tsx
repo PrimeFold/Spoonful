@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import toast from 'react-hot-toast'
 import LoaderComponent from "../../../components/loader"
-import { generateOtp } from "../../../lib/auth"
 import { useAuth } from "../../context/AuthContext"
 
 
@@ -17,17 +16,8 @@ export default function PasswordResetEmailPage() {
     setLoading(true);
     try {
       await RequestPasswordReset(email);
-      await new Promise(resolve => setTimeout(resolve, 500));
       setLoading(false)
-      try {
-        const response =  await generateOtp();
-        if(!response.success){
-          throw new Error(response.message)
-        }
-      } catch (error) {
-        toast.error((error as Error).message)
-      }
-      navigate("/reset-password")
+      toast.success("Password reset email sent! Please check your inbox.");
     } catch (error) {
       toast.error((error as Error).message)
       setLoading(false)
@@ -84,7 +74,7 @@ export default function PasswordResetEmailPage() {
         </p>
         <p className="text-center text-sm text-muted-foreground mt-5">
           Already have an Account?{" "}
-          <Link to="/signIn" className="font-bold text-primary hover:underline">
+          <Link to="/login" className="font-bold text-primary hover:underline">
             Log in
           </Link>
         </p>

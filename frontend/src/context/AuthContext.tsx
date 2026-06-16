@@ -57,7 +57,9 @@ function AuthProvider({children}: { children: ReactNode;}) {
       password,
     });
 
-    console.log("SIGN IN RESPONSE:", response);
+    console.log("SIGN IN RESPONSE : ",
+      JSON.stringify(response,null,2)
+    );
 
     if (response.error) {
       throw new Error(response.error.message);
@@ -70,7 +72,7 @@ function AuthProvider({children}: { children: ReactNode;}) {
     try {
       await authClient.requestPasswordReset({
         email,
-        redirectTo:"https://spoonful-liard.com/reset-password"
+        redirectTo: window.location.origin + "/reset-password"
       });
     } catch (error) {
       throw new Error((error as Error).message || "Internal Server Error")
@@ -90,14 +92,14 @@ function AuthProvider({children}: { children: ReactNode;}) {
 
 
   const signUp = async ({name,email,password}: SignUpCredentials) => {
-    const { error } = await authClient.signUp.email({
+    const response = await authClient.signUp.email({
       name,
       email,
       password,
     });
-
-    if (error) {
-      throw new Error(error.message || "Failed to sign up");
+    console.log("Sign up data : ",response.data);
+    if (response.error) {
+      throw new Error(response.error.message || "Failed to sign up");
     }
   };
 

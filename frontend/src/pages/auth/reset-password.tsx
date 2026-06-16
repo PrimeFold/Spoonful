@@ -30,7 +30,7 @@ export default function ResetPasswordPage() {
       });
       await new Promise(resolve => setTimeout(resolve, 800));
       toast.success("Password reset successfully");
-      navigate("/signIn");
+      navigate("/login");
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
 
         <p className="text-center text-sm text-muted-foreground mt-5">
           <Link
-            to="/signIn"
+            to="/login"
             className="font-bold text-primary hover:underline"
           >
             Back to Login

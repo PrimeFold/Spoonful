@@ -20,23 +20,27 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const response = await signIn({email:email,password:password});
-      console.log("signin result : ", response);
-      const session = authClient.useSession();
-      const user = session.data?.user;
-      console.log("timeout start")
+      const user = response?.data?.user;
       await new Promise(resolve => setTimeout(resolve, 500));
-      console.log("timeout over")
       setLoading(false)
-      if(user?.emailVerified==true){
-        console.log("Navigating user to home")
-        navigate("/app/home")
-      }else{
 
+      if(user?.emailVerified === true){
+        const role = (user as any)?.role ?? "STUDENT";
+        if (role === "OWNER") {
+          navigate("/owner/dashboard");
+        } else if (role === "ADMIN") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/app/home");
+        }
+      } else {
         try {
-          const response =  await generateOtp();
-          if(!response.success){
-            throw new Error(response.message)
+          const otpResponse = await generateOtp();
+          if(!otpResponse.success){
+            throw new Error(otpResponse.message)
           }
+          toast.success("Verification OTP sent to your email!");
+          navigate("/verification");
         } catch (error) {
           toast.error((error as Error).message)
         }
@@ -124,7 +128,7 @@ export default function LoginPage() {
               </button>
             </div>
             <div className="text-right mt-1.5">
-              <Link to="#" className="text-xs text-primary font-semibold hover:underline">
+              <Link to="/password-reset-email" className="text-xs text-primary font-semibold hover:underline">
                 Forgot password?
               </Link>
             </div>

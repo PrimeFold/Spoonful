@@ -1,30 +1,30 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, vi, beforeAll } from "vitest";
 
-const redisMock: any = {
-  get: jest.fn(),
-  setex: jest.fn(),
+const mockRedis: any = {
+  get: vi.fn(),
+  setex: vi.fn(),
 };
 
-const repositoryMock: any = {
-  findLocation: jest.fn(),
-  createLocation: jest.fn(),
-  findDuplicate: jest.fn(),
-  create: jest.fn(),
-  findMany: jest.fn(),
-  count: jest.fn(),
+const mockRepository: any = {
+  findLocation: vi.fn(),
+  createLocation: vi.fn(),
+  findDuplicate: vi.fn(),
+  create: vi.fn(),
+  findMany: vi.fn(),
+  count: vi.fn(),
 };
 
-jest.mock("../lib/redis", () => ({
+vi.mock("../lib/redis", () => ({
   __esModule: true,
-  redis: redisMock,
+  redis: mockRedis,
 }));
 
-jest.mock("../api/food_spots/fs.repository", () => ({
+vi.mock("../api/food_spots/fs.repository", () => ({
   __esModule: true,
-  FoodSpotRepository: repositoryMock,
+  FoodSpotRepository: mockRepository,
 }));
 
-jest.mock("../mapper/fs.mapper", () => ({
+vi.mock("../mapper/fs.mapper", () => ({
   __esModule: true,
   foodSpotToDTO: (spot: any) => ({
     id: spot.id,
@@ -38,10 +38,10 @@ jest.mock("../mapper/fs.mapper", () => ({
   }),
 }));
 
-jest.mock("../lib/filter", () => ({
+vi.mock("../lib/filter", () => ({
   __esModule: true,
-  buildFoodSpotFilters: jest.fn(() => ({})),
-  buildUserSubmissionsFilters: jest.fn(() => ({})),
+  buildFoodSpotFilters: vi.fn(() => ({})),
+  buildUserSubmissionsFilters: vi.fn(() => ({})),
 }));
 
 let getAllFoodSpots: typeof import("../api/food_spots/fs.service").getAllFoodSpots;
@@ -57,16 +57,16 @@ describe("food spot service", () => {
 
   beforeEach(() => {
     // Reset every mock before each test so the next case starts clean.
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it("returns cached food spots when redis already has the response", async () => {
     // A cache hit should skip the database entirely.
-    redisMock.get.mockResolvedValue(
+    mockRedis.get.mockResolvedValue(
       JSON.stringify({
         items: [{ id: "spot-1", name: "Cached Spot" }],
         pagination: { page: 1, limit: 10, total: 1, hasMore: false },
@@ -83,13 +83,13 @@ describe("food spot service", () => {
 
     expect(result.success).toBe(true);
     expect(result.message).toBe("CACHE HIT");
-    expect(repositoryMock.findMany).not.toHaveBeenCalled();
+    expect(mockRepository.findMany).not.toHaveBeenCalled();
   });
 
   it("fetches, shapes, and caches food spots when cache is empty", async () => {
     // On cache miss, the service should query the repository and cache the final payload.
-    redisMock.get.mockResolvedValue(null);
-    repositoryMock.findMany.mockResolvedValue([
+    mockRedis.get.mockResolvedValue(null);
+    mockRepository.findMany.mockResolvedValue([
       {
         id: "spot-1",
         name: "Campus Corner",
@@ -106,7 +106,7 @@ describe("food spot service", () => {
         createdAt: new Date("2026-06-12T00:00:00.000Z"),
       },
     ]);
-    repositoryMock.count.mockResolvedValue(1);
+    mockRepository.count.mockResolvedValue(1);
 
     const result = await getAllFoodSpots({
       page: 1,
@@ -124,16 +124,16 @@ describe("food spot service", () => {
       status: "PENDING",
       createAt: "2026-06-12T00:00:00.000Z",
     });
-    expect(redisMock.setex).toHaveBeenCalledTimes(1);
+    expect(mockRedis.setex).toHaveBeenCalledTimes(1);
   });
 
   it("adds a new food spot when the location and name are valid", async () => {
     // This checks the happy path for adding a spot, including location reuse and duplicate detection.
-    repositoryMock.findLocation.mockResolvedValue({
+    mockRepository.findLocation.mockResolvedValue({
       id: "location-1",
     });
-    repositoryMock.findDuplicate.mockResolvedValue(null);
-    repositoryMock.create.mockResolvedValue({
+    mockRepository.findDuplicate.mockResolvedValue(null);
+    mockRepository.create.mockResolvedValue({
       id: "spot-1",
       name: "Nandini",
       location: { locality: "Main Road", city: "Indore", state: "MP" },
@@ -153,15 +153,15 @@ describe("food spot service", () => {
     } as any);
 
     expect(result.success).toBe(true);
-    expect(repositoryMock.create).toHaveBeenCalledTimes(1);
+    expect(mockRepository.create).toHaveBeenCalledTimes(1);
   });
 
   it("rejects duplicate food spots before creating anything", async () => {
     // If the name/location already exists, the service should stop early.
-    repositoryMock.findLocation.mockResolvedValue({
+    mockRepository.findLocation.mockResolvedValue({
       id: "location-1",
     });
-    repositoryMock.findDuplicate.mockResolvedValue({
+    mockRepository.findDuplicate.mockResolvedValue({
       id: "spot-dup",
     });
 
@@ -178,6 +178,6 @@ describe("food spot service", () => {
 
     expect(result.success).toBe(false);
     expect(result.message).toBe("Food spot already exists");
-    expect(repositoryMock.create).not.toHaveBeenCalled();
+    expect(mockRepository.create).not.toHaveBeenCalled();
   });
 });
