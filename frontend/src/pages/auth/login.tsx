@@ -22,9 +22,13 @@ export default function LoginPage() {
       await signIn({email:email,password:password});
       const session = authClient.useSession();
       const user = session.data?.user;
+      console.log(user);
+      console.log("timeout start")
       await new Promise(resolve => setTimeout(resolve, 500));
+      console.log("timeout over")
       setLoading(false)
       if(user?.emailVerified==true){
+        console.log("Navigating user to home")
         navigate("/app/home")
       }else{
 
