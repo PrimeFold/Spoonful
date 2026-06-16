@@ -30,7 +30,7 @@ export interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  signIn: (credentials: SignInCredentials) => Promise<void>;
+  signIn: (credentials: SignInCredentials) => Promise<any>;
   signUp: (credentials: SignUpCredentials) => Promise<void>;
   resetPassword:(credentials:ForgotPasswordCredentials) => Promise<void>;
   RequestPasswordReset:(email:string)=>Promise<void>;
@@ -49,16 +49,21 @@ function AuthProvider({children}: { children: ReactNode;}) {
 
   const otpVerified = user?.emailVerified ?? false;
 
-  const signIn = async ({email,password,}: SignInCredentials) => {
-    console.log("Signing in...")
-    try {
-       const response = await authClient.signIn.email({  email ,  password });
-       if(response.error){
-        console.log(response.error)
-       }
-    } catch (error) {
-       throw new Error(( error as Error).message || "Failed to sign in");
+  const signIn = async ({ email, password }: SignInCredentials) => {
+    console.log("Signing in...");
+
+    const response = await authClient.signIn.email({
+      email,
+      password,
+    });
+
+    console.log("SIGN IN RESPONSE:", response);
+
+    if (response.error) {
+      throw new Error(response.error.message);
     }
+
+    return response;
   };
 
   const RequestPasswordReset = async(email:string)=>{

@@ -19,10 +19,10 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await signIn({email:email,password:password});
+      const response = await signIn({email:email,password:password});
+      console.log("signin result : ", response);
       const session = authClient.useSession();
       const user = session.data?.user;
-      console.log(user);
       console.log("timeout start")
       await new Promise(resolve => setTimeout(resolve, 500));
       console.log("timeout over")
