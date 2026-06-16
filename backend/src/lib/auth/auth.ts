@@ -39,23 +39,21 @@ export const auth = betterAuth({
         },
     },
     baseURL:baseUrl,
-    cookieOptions:{
-        httpOnly:true,
-        secure:true,
-        sameSite:'none',
-        path:'/'
-    },
     trustedOrigins:[
         frontendUrl as string
     ],
     advanced:{
         cookiePrefix:"better-auth",
         disableOriginCheck:process.env.NODE_ENV!=='production',
+        defaultCookieAttributes:{
+            sameSite:"none",
+            secure:true,
+            httpOnly:true
+        }
 
     },
     
 });
-
-
+console.log(auth.options);
 
 

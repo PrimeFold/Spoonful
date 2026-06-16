@@ -22,20 +22,19 @@ export default function LoginPage() {
       await signIn({email:email,password:password});
       await new Promise(resolve => setTimeout(resolve, 400));
       const user:User = await findUser(email);
-      await new Promise(resolve => setTimeout(resolve, 400));
       setLoading(false)
-      try {
-        const response =  await generateOtp();
-        if(!response.success){
-          throw new Error(response.message)
-        }
-      } catch (error) {
-        toast.error((error as Error).message)
-      }
       if(user.emailVerified==true){
         navigate("/app/home")
       }else{
-        navigate("/verification")
+
+        try {
+          const response =  await generateOtp();
+          if(!response.success){
+            throw new Error(response.message)
+          }
+        } catch (error) {
+          toast.error((error as Error).message)
+        }
       }
     } catch (error) {
       toast.error((error as Error).message)
