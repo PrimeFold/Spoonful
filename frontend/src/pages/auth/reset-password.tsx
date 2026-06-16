@@ -9,7 +9,6 @@ export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
   const { resetPassword } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,9 +28,8 @@ export default function ResetPasswordPage() {
         token,
         newPassword,
       });
-
+      await new Promise(resolve => setTimeout(resolve, 800));
       toast.success("Password reset successfully");
-
       navigate("/signIn");
     } catch (error) {
       toast.error((error as Error).message);
