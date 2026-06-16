@@ -43,13 +43,10 @@ export const VerifyOtpController : Handler = async (
 
 export const GenerateOtpController : Handler= async (req,res) => {
   try {
-    console.log("📩 [OTP-GENERATE] hit");
-
+    console.log("Otp controller started")
     const session = await auth.api.getSession({
       headers: req.headers,
     });
-
-    console.log("🧠 session:", session);
 
     if (!session) {
       console.log("❌ no session found");
@@ -60,17 +57,13 @@ export const GenerateOtpController : Handler= async (req,res) => {
       console.log("❌ no email in session");
       return res.status(401).json({ message: "No session email" });
     }
-
+    console.log("Session user verified and proceeding..")
     const email = session.user.email;
-    console.log("📧 email:", email);
-
     const result = await generateOtp(email);
-
-    console.log("✅ OTP generation result:", result);
-
+    console.log(result.success)
     return res.status(200).json(result);
+
   } catch (error) {
-    console.error("🔥 GenerateOtpController ERROR:", error);
 
     return res.status(500).json({
       message: "Internal Server Error",

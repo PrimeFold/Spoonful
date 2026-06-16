@@ -11,7 +11,6 @@ const Verification = () => {
   const [otp, setOtp] = useState(["","","","","",""]);
 
 
-
   const navigate = useNavigate();
   const { isAuthenticated  } = useAuth();
   

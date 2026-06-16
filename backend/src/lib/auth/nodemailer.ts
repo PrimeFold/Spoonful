@@ -22,8 +22,6 @@ export const transporter = nodemailer.createTransport({
         pass: process.env.SMTP_PASS
     }
 });
-const otp =  Math.floor(100000 + Math.random() * 900000).toString();
 
-export const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
 
 

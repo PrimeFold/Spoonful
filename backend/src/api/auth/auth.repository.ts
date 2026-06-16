@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/auth/auth";
 
 export const AuthRepository = {
+  
     async SaveOTPtoDb(hashedOtp:string,email:string){
          return await prisma.oTP.create({
             data: {

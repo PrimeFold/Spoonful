@@ -1,4 +1,3 @@
-import { prisma } from "../../lib/auth/auth";
 import { transporter } from "../../lib/auth/nodemailer";
 import { emailHtml } from "../../lib/emailHtml";
 import crypto from 'crypto'
@@ -11,20 +10,28 @@ export const generateOtp = async (email: string) => {
     .createHash("sha256")
     .update(code)
     .digest("hex");
+  try {
+    await AuthRepository.SaveOTPtoDb(hashedOtp,email);
+  
+    await transporter.sendMail({
+      from: `Spoonfull`,
+      to: email,
+      subject: "Verify Your Email",
+      html: emailHtml(code),
+    });
+    console.log("Email sent 💌")
+    return {
+      success: true,
+      message: "OTP sent",
+    };
+    
+  } catch (error) {
+    return{
+      success:false,
+      message:(error as Error).message ?? "Internal Server Error",
+    }
+  }
 
-  await AuthRepository.SaveOTPtoDb(hashedOtp,email);
-
-  await transporter.sendMail({
-    from: `Spoonfull <${process.env.SMPT_USER}>`,
-    to: email,
-    subject: "Verify Your Email",
-    html: emailHtml(code),
-  });
-
-  return {
-    success: true,
-    message: "OTP sent",
-  };
 };
 
 export const verifyOtp = async ( email:string,  userOtp:string ) => {

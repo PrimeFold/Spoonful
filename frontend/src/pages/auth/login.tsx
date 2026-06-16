@@ -19,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await signIn({email:email,password:password});
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 800));
       setLoading(false)
       try {
         const response =  await generateOtp();
