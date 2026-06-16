@@ -80,11 +80,6 @@ export const GetPendingFoodSpots = async({page = 1, limit = 10}:{page?:number,li
     return data;
 }
 
-export const GetOwnerPendingFoodSpots = async({page = 1, limit = 10}:{page?:number,limit?:number}={})=>{
-    const {data} = await api.get('/owner/food-spots/pending',{params:cleanParams({page,limit})});
-    return data;
-}
-
 export const VerifyPendingFoodSpots = async(id:string,status:VerificationStatusDTO)=>{
     const {data} = await api.patch(`/admin/food-spots/${id}/verify`,{spotId:id,status});
     return data;

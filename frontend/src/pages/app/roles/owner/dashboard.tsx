@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import {
-  ArrowRight,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -11,7 +10,6 @@ import {
   ShieldOff,
   School,
   Sparkles,
-  UtensilsCrossed,
   Users,
 } from "lucide-react";
 
@@ -26,16 +24,13 @@ import {
   DemoteToStudent,
   GetAllAdmins,
   GetAllStudents,
-  GetOwnerPendingFoodSpots,
   PromoteToAdmin,
 } from "../../../../../lib/actions";
 import { queryClient } from "../../../../../lib/queryClient";
 import type { ManagedUserDTO } from "../../../../../../shared/roles.type";
 
 const STUDENT_LIMIT = 10;
-const SPOT_LIMIT = 6;
 const OWNER_KEYS = {
-  pending: "owner:pending-food-spots",
   admins: "owner:admins",
   students: "owner:students",
 } as const;
@@ -56,21 +51,13 @@ export default function OwnerDashboard() {
 
   const [studentSearch, setStudentSearch] = useState("");
   const [studentPage, setStudentPage] = useState(1);
-  const [pendingPage, setPendingPage] = useState(1);
 
   useEffect(() => {
     if (sessionError) toast.error(sessionError.message);
   }, [sessionError]);
 
-  const pendingQueryKey = [OWNER_KEYS.pending, pendingPage, SPOT_LIMIT] as const;
   const adminsQueryKey = [OWNER_KEYS.admins] as const;
   const studentsQueryKey = [OWNER_KEYS.students, studentPage, studentSearch, STUDENT_LIMIT] as const;
-
-  const pendingQuery = useQuery({
-    queryKey: pendingQueryKey,
-    queryFn: () => GetOwnerPendingFoodSpots({ page: pendingPage, limit: SPOT_LIMIT }),
-    enabled: !!user,
-  });
 
   const adminsQuery = useQuery({
     queryKey: adminsQueryKey,
@@ -89,8 +76,6 @@ export default function OwnerDashboard() {
     enabled: !!user,
   });
 
-  const pendingSpots = pendingQuery.data?.data?.items ?? [];
-  const pendingPagination = pendingQuery.data?.data?.pagination;
   const admins = adminsQuery.data?.data ?? [];
   const students = studentsQuery.data?.data?.items ?? [];
   const studentPagination = studentsQuery.data?.data?.pagination;
@@ -199,16 +184,15 @@ export default function OwnerDashboard() {
     },
   });
 
-  const firstError = pendingQuery.error || adminsQuery.error || studentsQuery.error;
-  if (pendingQuery.isError || adminsQuery.isError || studentsQuery.isError) {
+  const firstError = adminsQuery.error || studentsQuery.error;
+  if (adminsQuery.isError || studentsQuery.isError) {
     return <ErrorPage error={firstError as Error} />;
   }
 
-  if (sessionLoading || pendingQuery.isLoading || adminsQuery.isLoading || studentsQuery.isLoading) {
+  if (sessionLoading || adminsQuery.isLoading || studentsQuery.isLoading) {
     return <LoaderComponent />;
   }
 
-  const totalPending = pendingPagination?.total ?? pendingSpots.length;
   const totalStudents = studentPagination?.total ?? students.length;
 
   return (

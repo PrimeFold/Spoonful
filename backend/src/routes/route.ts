@@ -38,7 +38,6 @@ router.get('/owner/admins',authMiddleware,requireRole("OWNER"),RolesController.G
 
 router.get('/owner/students',authMiddleware,requireRole("OWNER"),RolesController.GetAllStudentsController);
 
-router.get('/owner/food-spots/pending',authMiddleware,requireRole("OWNER"),RolesController.GetPendingFoodSpotsController);
 
 //Promotion to admin..
 router.post('/owner/admins',authMiddleware,requireRole("OWNER"),RolesController.PromoteToAdminController);
