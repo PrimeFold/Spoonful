@@ -47,7 +47,7 @@ export const GenerateOtpController : Handler= async (req,res) => {
     const session = await auth.api.getSession({
       headers: req.headers,
     });
-
+    console.log("cookie : ", req.headers.cookie)
     if (!session) {
       console.log("❌ no session found");
       return res.status(401).json({ message: "Unauthorized" });
@@ -57,6 +57,8 @@ export const GenerateOtpController : Handler= async (req,res) => {
       console.log("❌ no email in session");
       return res.status(401).json({ message: "No session email" });
     }
+
+
     console.log("Session user verified and proceeding..")
     const email = session.user.email;
     const result = await generateOtp(email);

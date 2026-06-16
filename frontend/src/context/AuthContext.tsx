@@ -52,13 +52,13 @@ function AuthProvider({children}: { children: ReactNode;}) {
   const signIn = async ({email,password,}: SignInCredentials) => {
     console.log("Signing in...")
     try {
-       await authClient.signIn.email({  email ,  password });
-      
+       const response = await authClient.signIn.email({  email ,  password });
+       if(response.error){
+        console.log(response.error)
+       }
     } catch (error) {
        throw new Error(( error as Error).message || "Failed to sign in");
     }
-    
-    
   };
 
   const RequestPasswordReset = async(email:string)=>{
