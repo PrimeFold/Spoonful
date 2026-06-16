@@ -20,8 +20,8 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await signIn({email:email,password:password});
+      const user = await findUser(email);
       await new Promise(resolve => setTimeout(resolve, 400));
-      const user:User = await findUser(email);
       setLoading(false)
       if(user.emailVerified==true){
         navigate("/app/home")

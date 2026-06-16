@@ -41,7 +41,7 @@ export const AuthRepository = {
     },
 
     async findUserVerificationStatus(email:string){
-      return await prisma.user.findUnique({
+      return await prisma.user.findFirst({
         where:{
           email:email
         },
