@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { verifyOtp } from "../../../lib/auth";
+import { verifyOtp, authClient } from "../../../lib/auth";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,12 +8,12 @@ import { useAuth } from "../../context/AuthContext";
 const Verification = () => {
   const [loading, setLoading] = useState(false);
 
-  const [otp, setOtp] = useState(["","","","","",""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
 
   const navigate = useNavigate();
-  const { isAuthenticated  } = useAuth();
-  
+  const { isAuthenticated } = useAuth();
+
 
   const handleChange = (value: string, index: number) => {
     if (!/^\d*$/.test(value)) return;
@@ -33,7 +33,7 @@ const Verification = () => {
     setLoading(true);
 
     try {
-      
+
       console.log("Otp generated")
       const joinedOtp = otp.join("");
 
@@ -49,6 +49,11 @@ const Verification = () => {
         return;
       }
 
+
+      await authClient.getSession({
+        query: { disableCookieCache: true }
+      });
+
       toast.success("OTP verified");
 
       navigate("/app/home");
@@ -63,56 +68,56 @@ const Verification = () => {
   return (
     <main className="bg-background min-h-screen flex flex-col items-center justify-center px-4 py-10">
 
-    <StyledWrapper>
-      <form className="otp-Form" onSubmit={handleVerification}>
-        <span className="mainHeading">Enter OTP</span>
+      <StyledWrapper>
+        <form className="otp-Form" onSubmit={handleVerification}>
+          <span className="mainHeading">Enter OTP</span>
 
-        <p className="otpSubheading">
-          We have sent a verification code to your email
-        </p>
+          <p className="otpSubheading">
+            We have sent a verification code to your email
+          </p>
 
-        <div className="inputContainer">
-          {otp.map((digit, index) => (
-            <input
-              key={index}
-              required
-              maxLength={1}
-              value={digit}
-              onChange={(e) =>
-                handleChange(e.target.value, index)
-              }
-              className="otp-input"
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-            />
-          ))}
-        </div>
+          <div className="inputContainer">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                required
+                maxLength={1}
+                value={digit}
+                onChange={(e) =>
+                  handleChange(e.target.value, index)
+                }
+                className="otp-input"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+              />
+            ))}
+          </div>
 
-        <button
-          className="verifyButton"
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? "Verifying..." : "Verify"}
-        </button>
-
-        <button
-          type="button"
-          className="exitBtn"
-          onClick={() => navigate("/")}
-        >
-          ×
-        </button>
-
-        <p className="resendNote">
-          Didn’t receive the code?
-          <button type="button" className="resendBtn">
-            Resend Code
+          <button
+            className="verifyButton"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Verifying..." : "Verify"}
           </button>
-        </p>
-      </form>
-    </StyledWrapper>
+
+          <button
+            type="button"
+            className="exitBtn"
+            onClick={() => navigate("/")}
+          >
+            ×
+          </button>
+
+          <p className="resendNote">
+            Didn’t receive the code?
+            <button type="button" className="resendBtn">
+              Resend Code
+            </button>
+          </p>
+        </form>
+      </StyledWrapper>
     </main>
   );
 };

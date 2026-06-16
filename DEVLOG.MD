@@ -295,3 +295,32 @@ if (!id) return toast.error("Id not found!") // ← returns void, not JSX!
   - When viewing their respective dashboards, they will see a **"Student View"** button in the navbar to quickly return to the regular application view.
   - This provides a neat, properly labeled, and completely transparent flow to switch views without any misleading elements.
 
+### 4. Toast Notifications Silently Broken
+- **Problem:** When validation failed or errors occurred, `toast.error()` was called but nothing was rendered on screen.
+- **Root Cause:** The `<Toaster />` context provider component from `react-hot-toast` was never rendered anywhere in the application tree.
+- **Fix:** Added `<Toaster position="top-center" />` inside the root `<BrowserRouter>` wrapper in `App.tsx`.
+
+### 5. Lack of Inline Authentication Feedback
+- **Problem:** If a user typed a wrong password or email, they had to rely solely on toast popups, and the auth forms themselves did not display any responsive inline visual feedback.
+- **Fix:** Created a local `errorMsg` state in `login.tsx`, `signup.tsx`, `pass-reset-email.tsx`, and `reset-password.tsx`. Hitting an error now mounts a styled red alert banner (`bg-red-500/10 text-red-500`) directly above the form fields with smooth entrance animations.
+
+### 6. Password Reset Email Displaying Raw HTML Code
+- **Problem:** Email clients received raw text displaying tags like `<p>` and `<a>` instead of rendering standard styled components.
+- **Root Cause:** In the backend `auth.ts`, the nodemailer transporter configuration used the `text:` field instead of the `html:` field.
+- **Fix:** Switched the configuration to `html:` and designed a clean, modern HTML email template using inline responsive styling matching the Spoonful aesthetic.
+
+### 7. Full-Screen Loader on Password Reset Request
+- **Problem:** Hitting 'Next' on the password reset email request page replaced the entire form with a loader screen, and there was no state indicating the dispatch was successful.
+- **Fix:** Refactored `pass-reset-email.tsx` to keep the form visible while placing a loading spinner directly inside the submit button. Added a new `emailSent` state that updates the button copy to "Email sent" and disables it once completed successfully.
+
+### 8. Session Desync After Successful OTP Verification
+- **Problem:** Immediately after a user successfully verified their OTP, navigating to `/app/home` was blocked or rejected because the client-side session store still cached the old `emailVerified: false` state.
+- **Fix:** Updated the validation flow in `verification.tsx` to force refetch the user session using:
+  ```typescript
+  await authClient.getSession({ 
+    query: { disableCookieCache: true } 
+  });
+  ```
+  right before navigation, which updates the cookie cache immediately and syncs client-side authentication states.
+
+

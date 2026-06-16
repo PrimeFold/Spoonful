@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { resetPassword } = useAuth();
@@ -14,9 +15,11 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setErrorMsg("");
     const token = searchParams.get("token");
 
     if (!token) {
+      setErrorMsg("Invalid or missing reset token");
       toast.error("Invalid or missing reset token");
       return;
     }
@@ -32,6 +35,7 @@ export default function ResetPasswordPage() {
       toast.success("Password reset successfully");
       navigate("/login");
     } catch (error) {
+      setErrorMsg((error as Error).message);
       toast.error((error as Error).message);
     } finally {
       setLoading(false);
@@ -63,6 +67,12 @@ export default function ResetPasswordPage() {
         <p className="text-sm text-muted-foreground mb-6">
           Enter your new password below.
         </p>
+
+        {errorMsg && (
+          <div className="bg-red-500/10 text-red-500 text-xs font-semibold px-4 py-3 rounded-2xl border border-red-500/20 mb-4 animate-in fade-in slide-in-from-top-1">
+            ⚠️ {errorMsg}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>

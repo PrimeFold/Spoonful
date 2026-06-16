@@ -1,5 +1,6 @@
 import { BrowserRouter } from "react-router-dom"
 import { Route,Routes } from "react-router-dom"
+import { Toaster } from "react-hot-toast"
 import LandingPage from "./pages/landing/LandingPage"
 import { HowItWorks } from "./pages/landing/how-it-works"
 import { ForBusinesses } from "./pages/landing/for-businesses"
@@ -21,6 +22,7 @@ import ResetPasswordPage from "./pages/auth/reset-password"
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<LandingPage/>}/> 
         <Route path="/how-it-works" element={<HowItWorks/>}/> 

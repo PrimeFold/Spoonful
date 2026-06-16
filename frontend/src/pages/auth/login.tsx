@@ -4,20 +4,21 @@ import { Eye, EyeOff } from "lucide-react"
 import toast from 'react-hot-toast'
 import { useAuth } from "../../context/AuthContext"
 import LoaderComponent from "../../../components/loader"
-import { authClient,  generateOtp } from "../../../lib/auth"
+import { generateOtp } from "../../../lib/auth"
 
 export default function LoginPage() {
   const [loading,setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [errorMsg, setErrorMsg] = useState("")
   const navigate = useNavigate();
   const { signIn } = useAuth();
-  const {} = useAuth();
 
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg("");
     try {
       const response = await signIn({email:email,password:password});
       const user = response?.data?.user;
@@ -46,6 +47,7 @@ export default function LoginPage() {
         }
       }
     } catch (error) {
+      setErrorMsg((error as Error).message);
       toast.error((error as Error).message)
       setLoading(false)
     }
@@ -88,6 +90,12 @@ export default function LoginPage() {
           <span className="text-xs text-muted-foreground font-medium">or with email</span>
           <div className="flex-1 h-px bg-border" />
         </div>
+
+        {errorMsg && (
+          <div className="bg-red-500/10 text-red-500 text-xs font-semibold px-4 py-3 rounded-2xl border border-red-500/20 mb-4 animate-in fade-in slide-in-from-top-1">
+            ⚠️ {errorMsg}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
