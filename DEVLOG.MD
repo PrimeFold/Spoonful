@@ -271,3 +271,27 @@ if (!id) return toast.error("Id not found!") // ← returns void, not JSX!
 `toast.error()` returns `void`, not a React element. This caused the component to return nothing on every render (since `/admin/dashboard` has no `:id` param), making the page permanently blank with no error.
 
 **Fix:** Removed the `useParams` pattern entirely — the admin dashboard is a standalone page that fetches all pending spots globally; it doesn't need a URL param. Also added the missing `/admin/dashboard` route to `App.tsx`.
+
+---
+
+## Day-13 Updates (Continued)
+
+### 1. Fix `inferAdditionalFields` Import Error
+- **Problem:** `Module '"better-auth/react"' has no exported member 'inferAdditionalFields'` error in frontend `lib/auth.ts`.
+- **Root Cause:** In `better-auth`, `inferAdditionalFields` is exported from the client plugins package `better-auth/client/plugins`, not `better-auth/react`.
+- **Fix:** Corrected the import path to `import { inferAdditionalFields } from "better-auth/client/plugins";`.
+
+### 2. Separated Owner and Admin Responsibilities
+- **Problem:** The owner console had a "Food spots being added" section for reviewing food spots, which is a responsibility meant exclusively for **Admins**, not the Owner (who only manages Admins).
+- **Fix:**
+  - Removed the `GetOwnerPendingFoodSpots` query and all pending review UI cards and stats from the Owner dashboard (`OwnerDashboard` in `owner/dashboard.tsx`).
+  - Removed the `GET /owner/food-spots/pending` route from the backend `route.ts`.
+
+### 3. Integrated Double-Sided Flow Switcher (Console Toggle)
+- **Problem:** When an Admin or Owner logged in, they were forced into their dashboard view and could not see the student home page (`/app/home`). Clicking "Home" on the bottom navigation would take them back to the student homepage, but they would have no way to get back to their dashboard.
+- **Fix:**
+  - Updated the global `Navbar` component to fetch the logged-in user session and role.
+  - If the user is an `ADMIN` or `OWNER`, they will see an **"Admin Panel"** or **"Owner Panel"** badge in the navbar when browsing student pages (Home, Search, Profile).
+  - When viewing their respective dashboards, they will see a **"Student View"** button in the navbar to quickly return to the regular application view.
+  - This provides a neat, properly labeled, and completely transparent flow to switch views without any misleading elements.
+

@@ -217,9 +217,8 @@ export default function OwnerDashboard() {
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[420px] lg:grid-cols-1 xl:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[300px] lg:grid-cols-1 xl:grid-cols-2">
               {[
-                { label: "Pending spots", value: totalPending, icon: UtensilsCrossed },
                 { label: "Admins", value: admins.length, icon: ShieldCheck },
                 { label: "Students", value: totalStudents, icon: School },
               ].map((item) => (
@@ -241,90 +240,6 @@ export default function OwnerDashboard() {
 
         <div className="mt-6 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
           <section className="space-y-6">
-            <Card className="border-border/70">
-              <CardHeader className="border-b border-border/70">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <CardTitle className="text-xl">Food spots being added</CardTitle>
-                    <CardDescription>Latest submissions waiting in the owner queue.</CardDescription>
-                  </div>
-                  <Badge variant="outline">{totalPending} total</Badge>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4 pt-6">
-                {pendingSpots.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-                    <p className="text-sm font-semibold text-muted-foreground">No submissions in the queue.</p>
-                  </div>
-                ) : (
-                  pendingSpots.map((spot:any) => (
-                    <article key={spot.id} className="rounded-3xl border border-border bg-card p-4 shadow-sm">
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-lg font-bold text-foreground">{spot.name}</h3>
-                            <Badge variant="secondary">{spot.spotRating}</Badge>
-                            <Badge variant="outline">{spot.status ?? "PENDING"}</Badge>
-                          </div>
-                          <p className="mt-2 text-sm text-muted-foreground">
-                            {[spot.location?.locality, spot.location?.town, spot.location?.city, spot.location?.state]
-                              .filter(Boolean)
-                              .join(", ")}
-                          </p>
-                          <p className="mt-1 text-xs text-muted-foreground">Submitted on {formatDate(spot.createAt)}</p>
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {spot.tags?.map((tag:any) => (
-                              <Badge key={tag} variant="outline">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-
-                        <Button asChild variant="outline" className="sm:self-start">
-                          <Link to={`/admin/food-spots/${spot.id}`}>
-                            Review
-                            <ArrowRight className="ml-1 h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </div>
-                    </article>
-                  ))
-                )}
-
-                {pendingPagination && (
-                  <div className="flex items-center justify-between pt-2">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setPendingPage((page) => Math.max(1, page - 1))}
-                      disabled={pendingPagination.page <= 1}
-                    >
-                      <ChevronLeft className="mr-1 h-4 w-4" />
-                      Prev
-                    </Button>
-
-                    <span className="text-sm text-muted-foreground">
-                      Page {pendingPagination.page} of {Math.max(1, Math.ceil(pendingPagination.total / pendingPagination.limit))}
-                    </span>
-
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => setPendingPage((page) => page + 1)}
-                      disabled={!pendingPagination.hasMore}
-                    >
-                      Next
-                      <ChevronRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
             <Card className="border-border/70">
               <CardHeader className="border-b border-border/70">
                 <div className="flex items-center justify-between gap-3">
@@ -485,10 +400,6 @@ export default function OwnerDashboard() {
                 <div className="flex items-start gap-2">
                   <Users className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   <p>Promote trusted students to admin with one click.</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <UtensilsCrossed className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                  <p>Review the incoming food spot queue before it goes live.</p>
                 </div>
               </CardContent>
             </Card>
