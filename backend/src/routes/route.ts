@@ -2,14 +2,14 @@ import * as FoodSpotController from '../api/food_spots/fs.controller'
 import  { Router } from 'express'
 import { limiter } from '../middleware/rateLimit';
 import { authMiddleware, requireRole } from '../middleware/authMiddleware';
-import { GenerateOtpController, VerifyOtpController } from '../api/auth/auth.controller';
+import * as AuthController from '../api/auth/auth.controller';
 import * as RolesController from '../api/roles/roles.controller'
 
 
 
 export const router = Router();
 
-
+router.get('/current-user-details',AuthController.findUserVerificationStatusController);
 router.get('/app/get-food-spots',authMiddleware,FoodSpotController.getAllFoodSpotsController);
 router.get('/app/get-food-spot/:id',authMiddleware,FoodSpotController.getFoodSpotById)
 router.get('/app/my-food-spots',authMiddleware,limiter,FoodSpotController.getFoodSpotsByUserIdController);
@@ -17,8 +17,8 @@ router.get('/app/my-food-spots',authMiddleware,limiter,FoodSpotController.getFoo
 //All POST routes
 router.post('/app/food-spot',authMiddleware,limiter,FoodSpotController.AddFoodSpotController);
 router.put('/app/add-food-rating',authMiddleware,limiter,FoodSpotController.assignRatingController);
-router.post('/otp/generate', GenerateOtpController);
-router.post('/otp/verify', VerifyOtpController)
+router.post('/otp/generate', AuthController.GenerateOtpController);
+router.post('/otp/verify', AuthController.VerifyOtpController)
 
 
 //ROLE BASED ROUTING..

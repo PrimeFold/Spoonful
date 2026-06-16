@@ -40,5 +40,16 @@ export const AuthRepository = {
         });
     },
 
+    async findUserVerificationStatus(email:string){
+      return await prisma.user.findUnique({
+        where:{
+          email:email
+        },
+        select:{
+          emailVerified:true,
+        }
+      })
+    }
+
 
 }

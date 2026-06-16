@@ -89,3 +89,30 @@ export const verifyOtp = async ( email:string,  userOtp:string ) => {
   }
   
 };
+
+export const findUserVerificationStatusService = async(email:string)=>{
+  try {
+    const user = await AuthRepository.findUserVerificationStatus(email);
+    if(!user){
+      return {
+        success:false,
+        message:"couldn't find user",
+        data:null
+      }
+    }
+
+    if(!user.emailVerified){
+      return{
+        success:false,
+        message:"User isn't verified",
+        data:user
+      }
+    }
+  } catch (error) {
+    return{
+      success:false,
+      message:(error as Error).message,
+      data:null
+    }
+  }
+}
