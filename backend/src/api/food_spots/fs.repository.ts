@@ -134,6 +134,24 @@ export const FoodSpotRepository = {
   },
 
   async verifyPendingSpot(id:string,status:VerificationStatus){
+    if (status === "REJECTED") {
+      const spot = await prisma.foodSpots.findUnique({
+        where: { id },
+        select: { locationId: true }
+      });
+      const deletedSpot = await prisma.foodSpots.delete({
+        where: { id }
+      });
+      if (spot?.locationId) {
+        await prisma.location.delete({
+          where: { id: spot.locationId }
+        }).catch(() => {
+          // ignore if deletion fails
+        });
+      }
+      return deletedSpot;
+    }
+
     return prisma.foodSpots.update({
       where:{
         id

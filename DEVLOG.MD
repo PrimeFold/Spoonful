@@ -363,6 +363,12 @@ Today, I refactored the Admin and Owner dashboards, integrated Recharts for anal
   - Redirected the admin back to the Admin Dashboard (`/admin/dashboard`) immediately after successful approval or rejection.
   - Restructured the query and mutation hook declarations to the top level of the component to fix the React hook order warning.
 
+### 7. Rejected/Unverified Food Spots Handling
+- **Problem:** Rejected or pending food spots were displaying on the public homepage/feed (under "Recently Added" section). Also, rejected food spot records remained in the database, taking up unnecessary storage space.
+- **Fix:**
+  - Updated the backend query filter builder (`buildFoodSpotFilters` in `filter.ts`) to always filter by `status: "VERIFIED"`, ensuring only verified spots show in public sections.
+  - Updated `verifyPendingSpot` in the `FoodSpotRepository` to immediately delete the food spot and its unique location from the database if the status is set to `REJECTED`.
+
 ## Lessons Learnt:
 - **KeepPreviousData**: When designing complex client dashboards, using `placeholderData: keepPreviousData` keeps the UI feeling instant and prevents layout shifts, providing a native-app feel.
 - **Strict Viewport Containment**: Setting main sections to overflow-hidden and lists to overflow-y-auto ensures layouts don't bleed on smaller screens.

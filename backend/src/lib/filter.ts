@@ -15,6 +15,7 @@ export const buildFoodSpotFilters = ({
   rating,
   userId,
 }: Filters): Prisma.FoodSpotsWhereInput => ({
+  status: "VERIFIED",
 
   ...(userId && { userId }),
 
