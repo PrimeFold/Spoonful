@@ -1,4 +1,4 @@
-import { getAllFoodSpots } from "./backend/src/api/food_spots/fs.service";
+import { getAllFoodSpots } from "../api/food_spots/fs.service";
 
 async function run() {
   try {

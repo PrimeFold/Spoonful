@@ -355,6 +355,14 @@ Today, I refactored the Admin and Owner dashboards, integrated Recharts for anal
 - **Problem:** Production build failed because Vite/Rolldown could not resolve the `"react-is"` import requested by `recharts`.
 - **Fix:** Installed `"react-is"` as a direct dependency in the frontend `package.json`, which resolves bundler tree-shaking issues cleanly.
 
+### 6. Admin Verification Page Improvements
+- **Problem:** Clicking "Approve" or "Reject" on a pending food spot from the Verification Page was executing actions on the backend, but the UI stayed on the same page without showing success/error toast notifications, loading indicators, or redirecting. Additionally, the component violated React Hook rules by having an early return check before hook declarations.
+- **Fix:** 
+  - Added success and error toast notifications using `react-hot-toast`.
+  - Added visual loading states on the buttons (disabling them and updating their labels to "Approving..." / "Rejecting...") during mutation lifecycle events.
+  - Redirected the admin back to the Admin Dashboard (`/admin/dashboard`) immediately after successful approval or rejection.
+  - Restructured the query and mutation hook declarations to the top level of the component to fix the React hook order warning.
+
 ## Lessons Learnt:
 - **KeepPreviousData**: When designing complex client dashboards, using `placeholderData: keepPreviousData` keeps the UI feeling instant and prevents layout shifts, providing a native-app feel.
 - **Strict Viewport Containment**: Setting main sections to overflow-hidden and lists to overflow-y-auto ensures layouts don't bleed on smaller screens.

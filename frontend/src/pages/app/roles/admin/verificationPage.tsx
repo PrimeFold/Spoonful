@@ -2,68 +2,89 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Badge } from "../../../../components/ui/badge";
-import  { Button } from "../../../../components/ui/button";
-import  { CardHeader, CardTitle, CardDescription, CardContent, Card } from "../../../../components/ui/card";
+import { Button } from "../../../../components/ui/button";
+import { CardHeader, CardTitle, CardDescription, CardContent, Card } from "../../../../components/ui/card";
 import { Separator } from "../../../../components/ui/separator";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { GetPendingFoodSpotById, VerifyPendingFoodSpots } from "../../../../../lib/actions";
 import toast from "react-hot-toast";
 import LoaderComponent from "../../../../../components/loader";
 import ErrorPage from "../../../error/error";
 import type { FoodSpotDTO } from "../../../../../../shared/food-spots.type";
 import { queryClient } from "../../../../../lib/queryClient";
+import { useEffect } from "react";
 
 const VerificationPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const {id} = useParams();
+  useEffect(() => {
+    if (!id) {
+      toast.error("Id not found!");
+      navigate("/admin/dashboard");
+    }
+  }, [id, navigate]);
 
-  if(!id){
-    return toast.error("Id not found !")
-  }
-  const {data,error,isLoading,isError} = useQuery({
-    queryKey:['pending-submission',id],
-    queryFn:()=>GetPendingFoodSpotById(id),
-  })
+  const { data, error, isLoading, isError } = useQuery({
+    queryKey: ["pending-submission", id],
+    queryFn: () => GetPendingFoodSpotById(id!),
+    enabled: !!id,
+  });
 
   const ApproveMutation = useMutation({
-    mutationFn: () => VerifyPendingFoodSpots(id, "VERIFIED"),
+    mutationFn: () => {
+      if (!id) throw new Error("Id not found");
+      return VerifyPendingFoodSpots(id, "VERIFIED");
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["pending-submission", id]});
-      queryClient.invalidateQueries({queryKey:['admin:pending-requests']});
-      queryClient.invalidateQueries({queryKey:['owner:pending-food-spots']});
+      toast.success("Food spot approved successfully!");
+      queryClient.invalidateQueries({ queryKey: ["pending-submission", id] });
+      queryClient.invalidateQueries({ queryKey: ["admin:pending-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["owner:pending-food-spots"] });
+      navigate("/admin/dashboard");
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || err?.message || "Failed to approve food spot");
     },
   });
 
-
   const RejectMutation = useMutation({
-    mutationFn:()=> VerifyPendingFoodSpots(id,"REJECTED"),
-    onSuccess:()=>{
-      queryClient.invalidateQueries({queryKey:["pending-submission",id]});
-      queryClient.invalidateQueries({queryKey:['admin:pending-requests']});
-      queryClient.invalidateQueries({queryKey:['owner:pending-food-spots']});
+    mutationFn: () => {
+      if (!id) throw new Error("Id not found");
+      return VerifyPendingFoodSpots(id, "REJECTED");
     },
-  })
+    onSuccess: () => {
+      toast.success("Food spot rejected successfully!");
+      queryClient.invalidateQueries({ queryKey: ["pending-submission", id] });
+      queryClient.invalidateQueries({ queryKey: ["admin:pending-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["owner:pending-food-spots"] });
+      navigate("/admin/dashboard");
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || err?.message || "Failed to reject food spot");
+    },
+  });
 
-  const handleVerification = (task:string)=>{
-    if(task=="APPROVE"){
+  const handleVerification = (task: string) => {
+    if (task === "APPROVE") {
       ApproveMutation.mutate();
-    }else if(task=="REJECT"){
+    } else if (task === "REJECT") {
       RejectMutation.mutate();
     }
-  }
+  };
 
   const PendingFoodSpot = data?.data as FoodSpotDTO | undefined;
 
-  if(isLoading){
-    return <LoaderComponent/>
+  if (isLoading) {
+    return <LoaderComponent />
   }
 
-  if(isError) return <ErrorPage error={error}/>
-  if(!PendingFoodSpot){
+  if (isError) return <ErrorPage error={error} />
+  if (!PendingFoodSpot) {
     toast.error("Pending spot not found");
-    return <LoaderComponent/>;
+    return <LoaderComponent />;
   }
-  
+
   return (
     <div className="container mx-auto max-w-6xl px-4 py-8">
       <div className="mb-8">
@@ -99,10 +120,10 @@ const VerificationPage = () => {
 
           <CardContent className="space-y-6">
             {/* Location */}
-           <div>
-            <h3 className="font-medium mb-3">
-              Location
-            </h3>
+            <div>
+              <h3 className="font-medium mb-3">
+                Location
+              </h3>
               <div className="rounded-lg border p-4">
                 <div className="space-y-1">
                   <p className="font-semibold">
@@ -155,7 +176,7 @@ const VerificationPage = () => {
             <Separator />
 
             {/* Images */}
-            {PendingFoodSpot.imageUrl && ( 
+            {PendingFoodSpot.imageUrl && (
               <div>
                 <h3 className="font-medium mb-3">
                   Photos
@@ -188,18 +209,20 @@ const VerificationPage = () => {
               <Button
                 className="w-full"
                 size="lg"
-                onClick={()=>handleVerification("APPROVE")}
+                disabled={ApproveMutation.isPending || RejectMutation.isPending}
+                onClick={() => handleVerification("APPROVE")}
               >
-                Approve Spot
+                {ApproveMutation.isPending ? "Approving..." : "Approve Spot"}
               </Button>
 
               <Button
                 variant="destructive"
                 className="w-full"
                 size="lg"
-                onClick={()=>handleVerification("REJECT")}
+                disabled={ApproveMutation.isPending || RejectMutation.isPending}
+                onClick={() => handleVerification("REJECT")}
               >
-                Reject Spot
+                {RejectMutation.isPending ? "Rejecting..." : "Reject Spot"}
               </Button>
             </CardContent>
           </Card>
@@ -214,7 +237,7 @@ const VerificationPage = () => {
             <CardContent className="space-y-4 text-sm">
               <div>
                 <p className="text-muted-foreground">
-                  Submitted By 
+                  Submitted By
                 </p>
 
                 <p className="font-medium">
