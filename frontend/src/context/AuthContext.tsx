@@ -50,16 +50,10 @@ function AuthProvider({children}: { children: ReactNode;}) {
   const otpVerified = user?.emailVerified ?? false;
 
   const signIn = async ({ email, password }: SignInCredentials) => {
-    console.log("Signing in...");
-
     const response = await authClient.signIn.email({
       email,
       password,
     });
-
-    console.log("SIGN IN RESPONSE : ",
-      JSON.stringify(response,null,2)
-    );
 
     if (response.error) {
       throw new Error(response.error.message);
@@ -97,7 +91,6 @@ function AuthProvider({children}: { children: ReactNode;}) {
       email,
       password,
     });
-    console.log("Sign up data : ",response.data);
     if (response.error) {
       throw new Error(response.error.message || "Failed to sign up");
     }

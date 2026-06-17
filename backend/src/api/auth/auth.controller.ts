@@ -43,26 +43,20 @@ export const VerifyOtpController : Handler = async (
 
 export const GenerateOtpController : Handler= async (req,res) => {
   try {
-    console.log("Otp controller started")
     const session = await auth.api.getSession({
       headers: req.headers,
     });
-    console.log("cookie : ", req.headers.cookie)
     if (!session) {
-      console.log("❌ no session found");
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     if (!session?.user?.email) {
-      console.log("❌ no email in session");
       return res.status(401).json({ message: "No session email" });
     }
 
 
-    console.log("Session user verified and proceeding..")
     const email = session.user.email;
     const result = await generateOtp(email);
-    console.log(result.success)
     return res.status(200).json(result);
 
   } catch (error) {

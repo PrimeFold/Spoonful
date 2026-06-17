@@ -6,13 +6,7 @@ dotenv.config();
 const user = process.env.SMTP_USER;
 const pass = process.env.SMTP_PASS;
 
-if(!pass){
-    console.log("user pass not found")
-}
 
-if(!user){
-    console.log("user  not found")
-}
 
 
 export const transporter = nodemailer.createTransport({

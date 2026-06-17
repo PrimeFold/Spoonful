@@ -64,7 +64,6 @@ const Verification = () => {
 
   const handleVerification = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("handle verification started")
     if (!isAuthenticated) {
       toast.error("Not authenticated");
       navigate("/login");
@@ -74,7 +73,6 @@ const Verification = () => {
 
     try {
 
-      console.log("Otp generated")
       const joinedOtp = otp.join("");
 
       if (joinedOtp.length !== 6) {

@@ -19,7 +19,6 @@ export const generateOtp = async (email: string) => {
       subject: "Verify Your Email",
       html: emailHtml(code),
     });
-    console.log("Email sent 💌")
     return {
       success: true,
       message: "OTP sent",

@@ -16,15 +16,7 @@ let baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 if (baseUrl === '/') {
     baseUrl = 'http://localhost:3000';
 }
-console.log("BASE URL =", baseUrl);
-console.log("NODE_ENV =", process.env.NODE_ENV);
 
-if(!baseUrl){
-    console.log("base url not found")
-}
-if(!frontendUrl){
-    console.log("frontend url missing")
-}
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql", 
@@ -90,6 +82,6 @@ export const auth = betterAuth({
         },
     },
 });
-console.log(auth.options);
+
 
 
