@@ -65,7 +65,7 @@ The app includes basic role-based routing on the backend.
 - `ADMIN` users can review pending food spots and verify them
 - `OWNER` users can access higher-level admin management routes
 
-This is part of the learning project setup and not a fully developed permissions system.
+This is part of the learning project setup and may have bugs
 
 ---
 
