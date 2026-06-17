@@ -323,4 +323,43 @@ if (!id) return toast.error("Id not found!") // ← returns void, not JSX!
   ```
   right before navigation, which updates the cookie cache immediately and syncs client-side authentication states.
 
+---
+
+# Day-14 (17/06/2026)
+
+Today, I refactored the Admin and Owner dashboards, integrated Recharts for analytics, setup robust caching for fluid transitions, and ensured DB queries are completely separated.
+
+## Key Changes:
+
+### 1. Viewport-Constrained Layouts
+- **Problem:** Dashboards scrolled past the window viewport, creating nested scroll bars and a generic, cheap look.
+- **Fix:** Redesigned both the Admin and Owner dashboards with a strict viewport constraint (`h-screen overflow-hidden flex flex-col bg-background`). All sub-panels and detail lists scroll internally using flex growth, keeping the main page static and compact.
+
+### 2. Smooth Analytics Transitions (Recharts AreaChart)
+- **Problem:** Chart loaders caused page flickering when switching periods (Day/Week/Month).
+- **Fix:** Swapped mock graphs for actual Recharts `AreaChart` components. Used `@tanstack/react-query`'s `placeholderData: keepPreviousData` strategy. Now, when toggling analytics periods, the existing graph is kept visible until new data resolves, animating the change smoothly without showing a flashing loader.
+
+### 3. Logged Admin Actions
+- **Problem:** The owner had no oversight of admin actions or which user submitted what food spot.
+- **Fix:** 
+  - Modified the spot verification endpoint to pass the `adminId` to the service.
+  - Recorded a log in the database `AdminAction` table when a spot is approved or rejected by an admin.
+  - Implemented `/owner/admin-actions` and `/owner/submitted-spots` endpoints.
+  - Grouped them under the Owner dashboard with multi-tab cards (Admins list vs Admin Actions log; Students list vs Submitted Spots with submitter user details).
+
+### 4. Code Splitting & Database Queries Separation
+- **Problem:** Direct database operations were mixed within service functions, breaking standard repository separation patterns.
+- **Fix:** Extracted all Prisma queries from `roles.service.ts` (such as the analytics creation dates query) into the dedicated `RolesRepository` inside `roles.repository.ts`, referencing them back inside service handlers.
+
+### 5. Vite Rolldown Bundle Resolution Error
+- **Problem:** Production build failed because Vite/Rolldown could not resolve the `"react-is"` import requested by `recharts`.
+- **Fix:** Installed `"react-is"` as a direct dependency in the frontend `package.json`, which resolves bundler tree-shaking issues cleanly.
+
+## Lessons Learnt:
+- **KeepPreviousData**: When designing complex client dashboards, using `placeholderData: keepPreviousData` keeps the UI feeling instant and prevents layout shifts, providing a native-app feel.
+- **Strict Viewport Containment**: Setting main sections to overflow-hidden and lists to overflow-y-auto ensures layouts don't bleed on smaller screens.
+- **Repository Pattern Integrity**: Keeping all raw database query logic inside repository files keeps services clean, testable, and prevents database import conflicts.
+- **Bundler Dependencies**: Modern bundlers (like Rolldown/Vite 8) are stricter with peer dependencies than older Webpack setups. Always run typecheck and build locally before deploying to catch missing sub-dependency issues early.
+
+
 

@@ -129,5 +129,86 @@ export const RolesRepository = {
         role:"ADMIN"
       }
     })
+  },
+
+  async CreateAdminAction(adminId: string, action: string, targetId: string, metadata: any) {
+    return prisma.adminAction.create({
+      data: {
+        adminId,
+        action,
+        targetId,
+        metadata: metadata ? (metadata as Prisma.InputJsonValue) : undefined,
+      },
+    });
+  },
+
+  async GetRecentAdminActions(limit: number = 50) {
+    return prisma.adminAction.findMany({
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        admin: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+  },
+
+  async GetSubmittedSpots(skip: number, take: number, search?: string) {
+    const where: Prisma.FoodSpotsWhereInput = search
+      ? {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { user: { name: { contains: search, mode: "insensitive" } } },
+            { user: { email: { contains: search, mode: "insensitive" } } },
+          ],
+        }
+      : {};
+
+    const [spots, total] = await Promise.all([
+      prisma.foodSpots.findMany({
+        where,
+        skip,
+        take,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          location: true,
+        },
+      }),
+      prisma.foodSpots.count({ where }),
+    ]);
+
+    return {
+      spots: spots.map(s => ({
+        ...s,
+        createdAt: s.createdAt.toISOString(),
+        verifiedAt: s.verifiedAt ? s.verifiedAt.toISOString() : null,
+      })),
+      total,
+    };
+  },
+
+  async GetSubmittedSpotsCreationDates() {
+    return prisma.foodSpots.findMany({
+      select: {
+        createdAt: true,
+      },
+    });
   }
 }
+

@@ -10,6 +10,7 @@ import LoaderComponent from "../../../components/loader"
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { BottomNav } from "../../components/bottom-nav"
 import ErrorPage from "../error/error"
+import { STATES, DISTRICTS_BY_STATE } from "../../constants/indiaData"
 
 const SPOT_TAGS: { label: string; value: TagsDTO }[] = [
   { label: "Veg", value: "VEG" },
@@ -31,32 +32,6 @@ const RATINGS: { label: string; value: SpotRatingDTO }[] = [
   { label: "😋 Great", value: "FOURSTAR" },
   { label: "🏆 Delicious", value: "FIVESTAR" },
 ]
-
-const STATES = [
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhattisgarh",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Tamil Nadu",
-  "Telangana",
-  "Uttar Pradesh",
-  "West Bengal",
-]
-
-
 
 
 
@@ -219,22 +194,6 @@ export default function AddSpotPage() {
                 className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm"
               />
 
-              <input
-                type="text"
-                placeholder="City"
-                value={form.location.city}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    location:{
-                      ...form.location,
-                      city:e.target.value
-                    }
-                  })
-                }
-                className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm"
-              />
-
               <Select
                 value={form.location.state}
                 onValueChange={(value)=>
@@ -242,7 +201,8 @@ export default function AddSpotPage() {
                     ...form,
                     location:{
                       ...form.location,
-                      state:value
+                      state:value,
+                      city: "" // Reset city when state changes
                     }
                   })
                 }
@@ -255,6 +215,36 @@ export default function AddSpotPage() {
                     {STATES.map((s) => (
                       <SelectItem key={s} value={s}>
                         {s}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={form.location.city}
+                disabled={!form.location.state}
+                onValueChange={(value)=>
+                  setForm({
+                    ...form,
+                    location:{
+                      ...form.location,
+                      city:value
+                    }
+                  })
+                }
+              >
+               <SelectTrigger className={cn(
+                 "w-full bg-card border border-border rounded-2xl px-4 py-3 text-sm h-[50px]",
+                 !form.location.state && "opacity-50 cursor-not-allowed"
+               )}>
+                  <SelectValue placeholder="City / District" />
+                </SelectTrigger>
+                <SelectContent position="popper" className="rounded-xl">
+                  <SelectGroup>
+                    {form.location.state && DISTRICTS_BY_STATE[form.location.state]?.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
                       </SelectItem>
                     ))}
                   </SelectGroup>

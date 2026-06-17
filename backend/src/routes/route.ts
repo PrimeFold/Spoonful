@@ -30,6 +30,7 @@ router.get('/admin/food-spots/pending',authMiddleware,requireRole("ADMIN"),Roles
 //Verify particular pending spot..
 router.patch('/admin/food-spots/:id/verify',authMiddleware,requireRole("ADMIN"),RolesController.VerifyPendingSpotController);
 router.get('/admin/food-spots/:id',authMiddleware,requireRole("ADMIN"),RolesController.GetPendingFoodSpotController)
+router.get('/admin/stats/submissions',authMiddleware,requireRole("ADMIN"),RolesController.GetSubmissionStatsController);
 
 //For OWNER..
 
@@ -47,3 +48,7 @@ router.post('/owner/admins',authMiddleware,requireRole("OWNER"),RolesController.
 
 //Demotion to a student..
 router.patch('/owner/admins/:id',authMiddleware,requireRole("OWNER"),RolesController.DemoteToStudentController);
+router.get('/owner/stats/submissions',authMiddleware,requireRole("OWNER"),RolesController.GetSubmissionStatsController);
+router.get('/owner/admin-actions',authMiddleware,requireRole("OWNER"),RolesController.GetAdminActionsController);
+router.get('/owner/submitted-spots',authMiddleware,requireRole("OWNER"),RolesController.GetSubmittedSpotsController);
+

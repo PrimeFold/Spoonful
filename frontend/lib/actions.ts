@@ -110,4 +110,35 @@ export const DemoteToStudent = async(userId:string)=>{
     return data;
 }
 
+export const GetAdminStats = async () => {
+    const { data } = await api.get('/admin/stats/submissions');
+    return data;
+}
+
+export const GetOwnerStats = async () => {
+    const { data } = await api.get('/owner/stats/submissions');
+    return data;
+}
+
+export const GetAdminActions = async () => {
+    const { data } = await api.get('/owner/admin-actions');
+    return data;
+}
+
+export const GetSubmittedSpots = async ({
+    page = 1,
+    limit = 10,
+    search = "",
+}: {
+    page?: number;
+    limit?: number;
+    search?: string;
+} = {}) => {
+    const { data } = await api.get('/owner/submitted-spots', {
+        params: cleanParams({ page, limit, search }),
+    });
+    return data;
+}
+
+
 

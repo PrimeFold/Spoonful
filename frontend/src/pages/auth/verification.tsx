@@ -1,25 +1,65 @@
 import styled from "styled-components";
 import { verifyOtp, authClient } from "../../../lib/auth";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const Verification = () => {
   const [loading, setLoading] = useState(false);
-
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-
   const handleChange = (value: string, index: number) => {
-    if (!/^\d*$/.test(value)) return;
+    const cleaned = value.slice(-1);
+    if (!/^\d*$/.test(cleaned)) return;
+
     const newOtp = [...otp];
-    newOtp[index] = value;
+    newOtp[index] = cleaned;
     setOtp(newOtp);
+
+    if (cleaned !== "" && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === "Backspace") {
+      if (otp[index] === "" && index > 0) {
+        const newOtp = [...otp];
+        newOtp[index - 1] = "";
+        setOtp(newOtp);
+        inputRefs.current[index - 1]?.focus();
+      } else {
+        const newOtp = [...otp];
+        newOtp[index] = "";
+        setOtp(newOtp);
+      }
+      e.preventDefault();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData("text").trim();
+    if (!/^\d+$/.test(pastedText)) return;
+
+    const digits = pastedText.slice(0, 6).split("");
+    const newOtp = [...otp];
+
+    digits.forEach((digit, idx) => {
+      if (idx < 6) {
+        newOtp[idx] = digit;
+      }
+    });
+
+    setOtp(newOtp);
+
+    const focusIndex = Math.min(5, digits.length - 1);
+    inputRefs.current[focusIndex]?.focus();
   };
 
   const handleVerification = async (e: React.FormEvent) => {
@@ -77,15 +117,18 @@ const Verification = () => {
           </p>
 
           <div className="inputContainer">
-            {otp.map((digit, index) => (
+             {otp.map((digit, index) => (
               <input
                 key={index}
+                ref={(el) => { inputRefs.current[index] = el; }}
                 required
                 maxLength={1}
                 value={digit}
                 onChange={(e) =>
                   handleChange(e.target.value, index)
                 }
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                onPaste={handlePaste}
                 className="otp-input"
                 type="text"
                 inputMode="numeric"

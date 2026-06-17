@@ -62,7 +62,8 @@ export const VerifyPendingSpotController:Handler = async(req,res)=>{
   try {
     const rawId = req.params.id;
     const spotId = (Array.isArray(rawId) ? rawId[0] : rawId) ?? result.data.spotId;
-    const response = await RoleService.VerifyPendingSpotService(spotId,result.data.status);
+    const adminId = req.user?.id;
+    const response = await RoleService.VerifyPendingSpotService(spotId,result.data.status, adminId);
     if(!response.success){
       return res.status(400).json(response)
     }
@@ -162,6 +163,56 @@ export const DemoteToStudentController: Handler = async(req,res)=>{
     });
   }
 }
+
+export const GetSubmissionStatsController: Handler = async (req, res) => {
+  try {
+    const response = await RoleService.GetSubmissionStatsService();
+    if (!response.success) {
+      return res.status(400).json(response);
+    }
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message || "Internal Server Error",
+    });
+  }
+};
+
+export const GetAdminActionsController: Handler = async (req, res) => {
+  try {
+    const response = await RoleService.GetAdminActionsService();
+    if (!response.success) {
+      return res.status(400).json(response);
+    }
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message || "Internal Server Error",
+    });
+  }
+};
+
+export const GetSubmittedSpotsController: Handler = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page as string || "1");
+    const limit = parseInt(req.query.limit as string || "10");
+    const search = req.query.search as string || undefined;
+
+    const response = await RoleService.GetSubmittedSpotsService({ page, limit, search });
+    if (!response.success) {
+      return res.status(400).json(response);
+    }
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: (error as Error).message || "Internal Server Error",
+    });
+  }
+};
+
 
 
 
