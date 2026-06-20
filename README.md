@@ -2,7 +2,7 @@
 
 Spoonful is a student-focused food discovery app built as a learning project. The idea is simple: help people find nearby food spots, browse what others have shared, and add places they think are worth checking out.
 
-The project is still small in scope and intentionally practical. It is not meant to look like a polished startup product, and the README reflects that.
+The project is still small in scope and intentionally practical. It is not meant to look like a polished startup product, and the README reflects that. Read DEVLOG.MD for in-depth development insights and story.
 
 ---
 
